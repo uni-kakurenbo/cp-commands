@@ -5,7 +5,7 @@ require("dotenv").config();
 const fs = require("fs");
 const path = require("path");
 
-const { Client } = require("./AtCoder-Helper/APIWrapper/src");
+const { Client } = require("./AtCoder-API-Wrapper/src");
 const client = new Client();
 
 const contestId = process.argv[2];
