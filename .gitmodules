@@ -1,3 +1,6 @@
 [submodule "AtCoder-API-Wrapper"]
 	path = AtCoder-API-Wrapper
 	url = https://github.com/uni-kakurenbo/atcoder-helper--api-wrapper.git
+[submodule "core/AtCoder-API-Wrapper"]
+	path = core/AtCoder-API-Wrapper
+	url = https://github.com/uni-kakurenbo/atcoder-helper--api-wrapper.git
