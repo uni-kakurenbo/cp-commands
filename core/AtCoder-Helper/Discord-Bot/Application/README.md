@@ -1,1 +1,0 @@
-# AtCoder-Helper-Discord-Bot-
