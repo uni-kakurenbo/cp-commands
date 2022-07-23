@@ -1,8 +1,11 @@
 #! /bin/bash
 
 cd "$(dirname "$0")" || exit 1
+
+# shellcheck source=/dev/null
 source ../cp.env
 
+# shellcheck source=/dev/null
 source ./functions/isUseable.sh
 
 DIRECTORY="$1"

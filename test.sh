@@ -89,10 +89,13 @@ CASES_INFO_PATH=$(readlink -f "$CASES_INFO_PATH")
 COMPILER_OUTPUT_PATH=$(readlink -f "$COMPILER_OUTPUT_PATH")
 RUNNER_OUTPUT_PATH=$(readlink -f "$RUNNER_OUTPUT_PATH")
 
+# shellcheck source=/dev/null
 source cp.env
-
+# shellcheck source=/dev/null
 source ./core/functions/indentStdin.sh
+# shellcheck source=/dev/null
 source ./core/functions/isUseable.sh
+# shellcheck source=/dev/null
 source ./core/functions/min_max.sh
 
 if ! isUseable "$(dirname "$CALLED")"; then
