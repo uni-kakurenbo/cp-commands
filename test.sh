@@ -157,6 +157,11 @@ if [ $TEST_MODE == 1 ]; then
       echo "$COMPILE_ERROR" | indentStdin "  "
     fi
     exit 1
+  else
+    if [ "$COMPILE_ERROR" != "" ]; then
+      echo "$(tput setaf 3)WARN: $(tput sgr0)Notes from the compiler:"
+      echo "$COMPILE_ERROR" | indentStdin "  "
+    fi
   fi
 
   {
@@ -375,6 +380,12 @@ echo "$FINAL_RESULT$(tput sgr0)"
 echo -n "$(echo "scale=2; ${TIME_INFO[0]} / 1" | bc -l)[ms] ― "
 echo -n "$(echo "scale=2; ${TIME_INFO[1]} / $NUM_OF_CASES" | bc -l)[ms] ― "
 echo "$(echo "scale=2; ${TIME_INFO[2]} / 1" | bc -l)[ms] "
+
+if [ "$COMPILE_ERROR" != "" ]; then
+  echo
+  echo "$(tput setaf 3)WARN: $(tput sgr0)Notes from the compiler:"
+  echo "$COMPILE_ERROR" | indentStdin "  "
+fi
 
 if [ "$AC_COUNT" = "$NUM_OF_CASES" ]; then
   echo
