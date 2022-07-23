@@ -1,0 +1,8 @@
+[m[3;35m#60  [m[m[32mcircles[m: [34m<vector>[m [ [34m<vector>[m [ [36m0[31m[m, [36m0[31m[m, [36m1[31m[m ], [34m<vector>[m [ [36m0[31m[m, [36m0[31m[m, [36m2[31m[m ], [34m<vector>[m [ [36m0[31m[m, [36m0[31m[m, [36m3[31m[m ] ][m[m
+[m[3;35m#46  [m[m[32md[m: [36m1[31mLL[m[m,[m[32m 1LL*this->r*this->r[m: [36m1[31mLL[m[m[m
+[m[3;35m#46  [m[m[32md[m: [36m9[31mLL[m[m,[m[32m 1LL*this->r*this->r[m: [36m1[31mLL[m[m[m
+[m[3;35m#46  [m[m[32md[m: [36m1[31mLL[m[m,[m[32m 1LL*this->r*this->r[m: [36m4[31mLL[m[m[m
+[m[3;35m#46  [m[m[32md[m: [36m9[31mLL[m[m,[m[32m 1LL*this->r*this->r[m: [36m4[31mLL[m[m[m
+[m[3;35m#46  [m[m[32md[m: [36m1[31mLL[m[m,[m[32m 1LL*this->r*this->r[m: [36m9[31mLL[m[m[m
+[m[3;35m#46  [m[m[32md[m: [36m9[31mLL[m[m,[m[32m 1LL*this->r*this->r[m: [36m9[31mLL[m[m[m
+[m[3;35m#72  [m[m[32ms[m: [36m0[31m[m[m,[m[32mt[m: [36m2[31m[m[m[m
