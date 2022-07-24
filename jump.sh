@@ -48,5 +48,5 @@ if [ "$SECOND" == "0" ] && [ "$PROBLEM_ID" != "" ]; then
   URL+="/tasks/${CONTEST_ID}_$PROBLEM_ID"
 fi
 
-echo "Oepn: $(tput setaf 6)$URL"
+echo "$(tput setaf 2)INFO: $(tput sgr0)Oepn: $(tput setaf 6)$URL"
 "$CHROME_PATH" "$URL"
