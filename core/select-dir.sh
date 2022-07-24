@@ -6,14 +6,14 @@ cd "$(dirname "$0")" || exit 1
 source ../cp.env
 
 # shellcheck source=/dev/null
-source ./functions/isUseable.sh
+source ./functions/is_useable.sh
 
 DIRECTORY="$1"
-if ! isUseable "$DIRECTORY"; then
+if ! is_useable "$DIRECTORY"; then
   DIRECTORY="$(dirname "$DIRECTORY")"
 fi
 
-if ! isUseable "$DIRECTORY"; then
+if ! is_useable "$DIRECTORY"; then
   exit 1
 fi
 

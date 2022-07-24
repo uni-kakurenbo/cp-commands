@@ -28,11 +28,11 @@ PROBLEM_ID="${ARGUMENTS[1]}"
 cd "$(dirname "${ARGUMENTS[0]}")" || exit 1
 source cp.env
 
-source ./core/functions/isUseable.sh
+source ./core/functions/is_useable.sh
 
-isUseable "$CALLED"
+is_useable "$CALLED"
 FIRST="$?"
-isUseable "$(dirname "$CALLED")"
+is_useable "$(dirname "$CALLED")"
 SECOND="$?"
 
 URL=""

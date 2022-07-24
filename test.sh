@@ -92,13 +92,13 @@ RUNNER_OUTPUT_PATH=$(readlink -f "$RUNNER_OUTPUT_PATH")
 # shellcheck source=/dev/null
 source cp.env
 # shellcheck source=/dev/null
-source ./core/functions/indentStdin.sh
+source ./core/functions/indent_stdin.sh
 # shellcheck source=/dev/null
-source ./core/functions/isUseable.sh
+source ./core/functions/is_useable.sh
 # shellcheck source=/dev/null
 source ./core/functions/min_max.sh
 
-if ! isUseable "$(dirname "$CALLED")"; then
+if ! is_useable "$(dirname "$CALLED")"; then
   echo "$(tput setaf 3)WARN: $(tput sgr0)This command cannot be used in the directory."
   exit 1
 fi
@@ -157,47 +157,47 @@ if [ $TEST_MODE == 1 ]; then
   if ! [ -f "$COMPILER_OUTPUT_PATH" ]; then
     if [ "$COMPILE_ERROR" != "" ]; then
       echo "$(tput setaf 197)ERROR: $(tput sgr0)Failed to compile:"
-      echo "$COMPILE_ERROR" | indentStdin "  "
+      echo "$COMPILE_ERROR" | indent_stdin "  "
     fi
     exit 1
   else
     if [ "$COMPILE_ERROR" != "" ]; then
       echo "$(tput setaf 3)WARN: $(tput sgr0)Notes from the compiler:"
-      echo "$COMPILE_ERROR" | indentStdin "  "
+      echo "$COMPILE_ERROR" | indent_stdin "  "
     fi
   fi
 
   {
     echo "$(tput setaf 109)INFO: $(tput sgr0)Running: $(tput sgr0)[PID:$BASHPID]"
     echo -n "$(tput setaf 8)>> $(tput sgr0)"
-    $EXECUTE_COMMAND "$COMPILER_OUTPUT_PATH" $EXECUTE_OPTIONS 1>"$INDEX.res" 2>"$INDEX.log"
+    $EXECUTE_COMMAND "$COMPILER_OUTPUT_PATH" $EXECUTE_OPTIONS 1>".res" 2>".log"
     echo "$?" >.status
   }
   wait
 
-  RESPONSE=$(cat .res)
-  RESPONSE=$(echo "$RESPONSE" | sed -E 's/^[[:blank:]]+|[[:blank:]]+$//')
+  response=$(cat .res)
+  response=$(echo "$response" | sed -E 's/^[[:blank:]]+|[[:blank:]]+$//')
 
   if [ "$(wc -l <.log)" -lt 100 ]; then
-    LOG=$(cat ".log")
+    log=$(cat ".log")
   else
-    LOG="$(tput setaf 3)WARN: $(tput sgr0)Too many logged messages"
+    log="$(tput setaf 3)WARN: $(tput sgr0)Too many logged messages"
   fi
 
-  STATUS=$(cat ".status")
+  status_code=$(cat ".status")
 
   echo -e "\r$(tput setaf 12)---response---"
-  echo "$(tput sgr0)$RESPONSE"
+  echo "$(tput sgr0)$response"
 
-  if [ $LOGGING == 1 ] && [ "$LOG" != "" ]; then
+  if [ $LOGGING == 1 ] && [ "$log" != "" ]; then
     echo "$(tput setaf 12)---log---"
-    echo "$(tput sgr0)$LOG"
+    echo "$(tput sgr0)$log"
   fi
 
-  if [ "$STATUS" == "0" ]; then
+  if [ "$status_code" == "0" ]; then
     echo "$(tput setaf 109)STATUS : $(tput setaf 6)0"
   else
-    echo "$(tput setaf 109)STATUS : $(tput sgr0)$STATUS"
+    echo "$(tput setaf 109)STATUS : $(tput sgr0)$status_code"
   fi
 
   exit 0
@@ -255,7 +255,7 @@ COMPILE_ERROR=$(cat "$COMPILE_ERROR_PATH")
 if ! [ -f "$COMPILER_OUTPUT_PATH" ]; then
   if [ "$COMPILE_ERROR" != "" ]; then
     echo "$(tput setaf 197)ERROR: $(tput sgr0)Failed to compile:"
-    echo "$COMPILE_ERROR" | indentStdin "  "
+    echo "$COMPILE_ERROR" | indent_stdin "  "
   fi
   exit 1
 fi
@@ -270,32 +270,33 @@ fi
 cd "$RUNNER_OUTPUT_PATH" || exit 1
 rm -rf ./*
 
-function testSampleCase() {
-  local INDEX="$1"
-  INPUT_FILE="$CASES_PATH/${INDEX}.in"
-  OUTPUT_FILE="$CASES_PATH/${INDEX}.out"
-  if ! [ -f "$INPUT_FILE" ] || ! [ -f "$OUTPUT_FILE" ]; then
-    echo "$(tput setaf 1)ERROR: $(tput sgr0)Sample case $INDEX does not exist."
+function test_sample_case() {
+  local index="$1"
+  local input_file="$CASES_PATH/${index}.in" output_file="$CASES_PATH/${index}.out"
+  if ! [ -f "$input_file" ] || ! [ -f "$output_file" ]; then
+    echo "$(tput setaf 1)ERROR: $(tput sgr0)Sample case $index does not exist."
     exit 1
   fi
   {
-    STARTED_AT=$(date +%s.%N)
-    echo "$(tput setaf 109)INFO: $(tput sgr0)Running: $(tput setaf 109)${INDEX} $(tput sgr0)[PID:$BASHPID]"
-    timeout "$TIME_LIMIT_S" $EXECUTE_COMMAND "$COMPILER_OUTPUT_PATH" $EXECUTE_OPTIONS <"$INPUT_FILE" 1>"$INDEX.res" 2>"$INDEX.log"
-    echo "$?" >"$INDEX.status"
-    ENDED_AT=$(date +%s.%N)
-    EXECUTE_TIME=$(echo "($ENDED_AT- $STARTED_AT) * 1000" | bc)
-    echo "$EXECUTE_TIME" >"$INDEX.time"
+    local started_at ended_at
+    started_at=$(date +%s.%N)
+    echo "$(tput setaf 109)INFO: $(tput sgr0)Running: $(tput setaf 109)${index} $(tput sgr0)[PID:$BASHPID]"
+    timeout "$TIME_LIMIT_S" $EXECUTE_COMMAND "$COMPILER_OUTPUT_PATH" $EXECUTE_OPTIONS <"$input_file" 1>"$index.res" 2>"$index.log"
+    echo "$?" >"$index.status"
+    ended_at=$(date +%s.%N)
+    local execute_time
+    execute_time=$(echo "($ended_at- $started_at) * 1000" | bc)
+    echo "$execute_time" >"$index.time"
   } &
 }
 
 if [ "$SAMPLE_INDEX" == 0 ]; then
-  for INDEX in $(seq 1 "$NUM_OF_CASES"); do
-    testSampleCase "$INDEX"
+  for index in $(seq 1 "$NUM_OF_CASES"); do
+    test_sample_case "$index"
   done
 else
-  for INDEX in $(echo "$SAMPLE_INDEX" | fold -s1); do
-    testSampleCase "$INDEX"
+  for index in $(echo "$SAMPLE_INDEX" | fold -s1); do
+    test_sample_case "$index"
   done
   NUM_OF_CASES=${#SAMPLE_INDEX}
 fi
@@ -305,81 +306,85 @@ wait
 AC_COUNT=0
 TIME_INFO=("$TIME_LIMIT_S"0000 0 -"$TIME_LIMIT_S"0000)
 
-function printResults() {
-  local INDEX="$1"
-  INPUT_FILE="$CASES_PATH/${INDEX}.in"
-  OUTPUT_FILE="$CASES_PATH/${INDEX}.out"
-  INPUT=$(cat "$INPUT_FILE")
-  OUTPUT=$(cat "$OUTPUT_FILE")
+function print_results() {
+  local index="$1"
+  local response log
 
-  RESPONSE=$(cat "$INDEX.res")
-  RESPONSE=$(echo "$RESPONSE" | sed -E 's/^[[:blank:]]+|[[:blank:]]+$//')
-  if [ "$(wc -l <"$INDEX.log")" -lt 100 ]; then
-    LOG=$(cat "$INDEX.log")
+  local input_file="$CASES_PATH/${index}.in"
+  local output_file="$CASES_PATH/${index}.out"
+  input_data=$(cat "$input_file")
+  expected_output=$(cat "$output_file")
+
+  response=$(cat "$index.res")
+  response=$(echo "$response" | sed -E 's/^[[:blank:]]+|[[:blank:]]+$//')
+  if [ "$(wc -l <"$index.log")" -lt 100 ]; then
+    log=$(cat "$index.log")
   else
-    LOG="$(tput setaf 3)WARN: $(tput sgr0)Too many logged messages"
+    log="$(tput setaf 3)WARN: $(tput sgr0)Too many logged messages"
   fi
-  TIME_REQUIRED=$(cat "$INDEX.time")
-  TIME_INFO[0]="$(min "${TIME_INFO[0]}" "${TIME_REQUIRED}")"
-  TIME_INFO[2]="$(max "${TIME_INFO[2]}" "${TIME_REQUIRED}")"
-  TIME_INFO[1]=$(echo "${TIME_INFO[1]} + $TIME_REQUIRED" | bc -l)
 
-  STATUS=$(cat "$INDEX.status")
+  local time_required
+  time_required=$(cat "$index.time")
+  TIME_INFO[0]="$(min "${TIME_INFO[0]}" "${time_required}")"
+  TIME_INFO[2]="$(max "${TIME_INFO[2]}" "${time_required}")"
+  TIME_INFO[1]=$(echo "${TIME_INFO[1]} + $time_required" | bc -l)
+
+  status_code=$(cat "$index.status")
 
   echo
-  echo "$(tput setaf 14)----- Samplse Case $INDEX -----"
+  echo "$(tput setaf 14)----- Samplse Case $index -----"
   echo "$(tput setaf 13)---inputted---"
-  echo "$(tput sgr0)$INPUT"
+  echo "$(tput sgr0)$input_data"
   echo "$(tput setaf 13)---expected---"
-  echo "$(tput sgr0)$OUTPUT"
+  echo "$(tput sgr0)$expected_output"
   echo "$(tput setaf 12)---response---"
-  echo "$(tput sgr0)$RESPONSE"
-  if [ $LOGGING == 1 ] && [ "$LOG" != "" ]; then
+  echo "$(tput sgr0)$response"
+  if [ $LOGGING == 1 ] && [ "$log" != "" ]; then
     echo "$(tput setaf 12)---log---"
-    echo "$(tput sgr0)$LOG"
+    echo "$(tput sgr0)$log"
   fi
   tput setaf 202
-  if [ "$STATUS" != "0" ]; then
-    if [ "$STATUS" == "124" ]; then
+  if [ "$status_code" != "0" ]; then
+    if [ "$status_code" == "124" ]; then
       echo "JUDGE  : TLE"
     else
       echo "JUDGE  : RE"
     fi
-  elif [ "$RESPONSE" == "$OUTPUT" ]; then
+  elif [ "$response" == "$expected_output" ]; then
     echo "$(tput setaf 10)JUDGE  : AC"
     AC_COUNT=$((AC_COUNT + 1))
   else
     echo "JUDGE  : WA"
   fi
-  if [ "$STATUS" == "0" ]; then
+  if [ "$status_code" == "0" ]; then
     echo "$(tput setaf 109)STATUS : $(tput setaf 6)0"
   else
-    echo "$(tput setaf 109)STATUS : $(tput sgr0)$STATUS"
+    echo "$(tput setaf 109)STATUS : $(tput sgr0)$status_code"
   fi
-  echo "$(tput setaf 109)TIME   : $(tput sgr0)$(echo "scale=2; $TIME_REQUIRED / 1" | bc)[ms]"
+  echo "$(tput setaf 109)TIME   : $(tput sgr0)$(echo "scale=2; $time_required / 1" | bc)[ms]"
 }
 
 if [ "$SAMPLE_INDEX" == 0 ]; then
-  for INDEX in $(seq 1 "$NUM_OF_CASES"); do
-    printResults "$INDEX"
+  for index in $(seq 1 "$NUM_OF_CASES"); do
+    print_results "$index"
   done
 else
-  for INDEX in $(echo "$SAMPLE_INDEX" | fold -s1); do
-    printResults "$INDEX"
+  for index in $(echo "$SAMPLE_INDEX" | fold -s1); do
+    print_results "$index"
   done
   NUM_OF_CASES=${#SAMPLE_INDEX}
 fi
 
 if [ "$AC_COUNT" == "$NUM_OF_CASES" ]; then
-  FINAL_RESULT="$(tput setaf 148)ACCEPTED"
+  final_result="$(tput setaf 148)ACCEPTED"
 else
-  FINAL_RESULT="$(tput setaf 204)REJECTED"
+  final_result="$(tput setaf 204)REJECTED"
 fi
 
 echo
 echo "$(tput setaf 9)AC: ${AC_COUNT}/${NUM_OF_CASES}"
 echo "$(tput setaf 183)----- Summary -----"
-echo "$FINAL_RESULT$(tput sgr0)"
+echo "$final_result$(tput sgr0)"
 echo -n "$(echo "scale=2; ${TIME_INFO[0]} / 1" | bc -l)[ms] ― "
 echo -n "$(echo "scale=2; ${TIME_INFO[1]} / $NUM_OF_CASES" | bc -l)[ms] ― "
 echo "$(echo "scale=2; ${TIME_INFO[2]} / 1" | bc -l)[ms] "
@@ -387,15 +392,15 @@ echo "$(echo "scale=2; ${TIME_INFO[2]} / 1" | bc -l)[ms] "
 if [ "$COMPILE_ERROR" != "" ]; then
   echo
   echo "$(tput setaf 3)WARN: $(tput sgr0)Notes from the compiler:"
-  echo "$COMPILE_ERROR" | indentStdin "  "
+  echo "$COMPILE_ERROR" | indent_stdin "  "
 fi
 
 if [ "$AC_COUNT" = "$NUM_OF_CASES" ]; then
   echo
   echo "$(tput setaf 2)INFO: $(tput sgr0)All Cases were accepted."
   echo "$(tput setaf 6)INFO: $(tput sgr0)Do you want to copy to the clipboard? (y/n)"
-  read -p "$(tput setaf 8)>> $(tput sgr0)" -r input
-  if ! { [ "$input" == "y" ] || [ "$input" == "yes" ] || [ "$input" == "YES" ]; }; then
+  read -p "$(tput setaf 8)>> $(tput sgr0)" -r input_data
+  if ! { [ "$input_data" == "y" ] || [ "$input_data" == "yes" ] || [ "$input_data" == "YES" ]; }; then
     exit 0
   fi
   cd "$ROOT" || exit 1
