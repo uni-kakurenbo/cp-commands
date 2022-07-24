@@ -11,7 +11,7 @@ fi
 
 DIRECTORY=$(ccore select-dir "$CALLED")
 if [ "$DIRECTORY" == 1 ]; then
-  echo "$(tput setaf 3)WARN: $(tput sgr0)This command cannot be used in the directory."
+  echo "$(tput setaf 3)WARN: $(tput sgr0)This command cannot be used within this directory."
   return 1
 fi
 echo "$(tput setaf 6)INFO: $(tput sgr0)Contest selected: $(tput setaf 5)$SELECTED_COUNTEST"

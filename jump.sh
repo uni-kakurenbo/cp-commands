@@ -40,7 +40,7 @@ URL=""
 if [ "$FIRST" == "0" ] || [ "$SECOND" == "0" ]; then
   URL="https://atcoder.jp/contests/$CONTEST_ID"
 else
-  echo "$(tput setaf 3)WARN: $(tput sgr0)This command cannot be used in the directory."
+  echo "$(tput setaf 3)WARN: $(tput sgr0)This command cannot be used within this directory."
   exit 1
 fi
 

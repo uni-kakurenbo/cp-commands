@@ -99,7 +99,7 @@ source ./core/functions/is_useable.sh
 source ./core/functions/min_max.sh
 
 if ! is_useable "$(dirname "$CALLED")"; then
-  echo "$(tput setaf 3)WARN: $(tput sgr0)This command cannot be used in the directory."
+  echo "$(tput setaf 3)WARN: $(tput sgr0)This command cannot be used within this directory."
   exit 1
 fi
 
