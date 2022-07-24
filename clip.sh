@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -lt 1 ]; then
-  echo "At least a arguments are required:"
+  echo "At least a argument are required:"
   echo "1. File Name"
   echo "[2.] Extension (Default: *)"
   exit 0

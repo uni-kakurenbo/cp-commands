@@ -60,7 +60,7 @@ while (($# > 0)); do
 done
 
 if [ ${#ARGUMENTS[@]} -lt 2 ]; then
-  echo "At least a arguments are required:"
+  echo "At least a argument are required:"
   echo "1. Filename (without extension)"
   echo "[2.] Extension (Default: *)"
   exit 0

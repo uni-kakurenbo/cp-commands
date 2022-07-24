@@ -4,7 +4,7 @@ CALLED="$PWD"
 SELECTED_COUNTEST="$1$2$3"
 
 if [ $# -lt 1 ]; then
-  echo "At least a arguments are required:"
+  echo "At least a argument are required:"
   echo "1. ContestId"
   exit 0
 fi
