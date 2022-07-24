@@ -53,8 +53,8 @@ source cp.env
 
 cd "$ROOT" || exit 1
 
-touch "./templates/template.$EXTNAME"
-TEMPLATE=$(readlink -f "./templates/template.$EXTNAME")
+touch "./sources/templates/template.$EXTNAME"
+TEMPLATE=$(readlink -f "./sources/templates/template.$EXTNAME")
 
 cd "$CALLED" || exit 1
 
