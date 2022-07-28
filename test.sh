@@ -178,7 +178,7 @@ if [ $TEST_MODE == 1 ]; then
   response=$(cat .res)
   response=$(echo "$response" | sed -E 's/^[[:blank:]]+|[[:blank:]]+$//')
 
-  if [ "$(wc -l <.log)" -lt 100 ]; then
+  if [ "$(wc -l <.log)" -lt 1023 ]; then
     log=$(cat ".log")
   else
     log="$(tput setaf 3)WARN: $(tput sgr0)Too many logged messages"
@@ -317,7 +317,7 @@ function print_results() {
 
   response=$(cat "$index.res")
   response=$(echo "$response" | sed -E 's/^[[:blank:]]+|[[:blank:]]+$//')
-  if [ "$(wc -l <"$index.log")" -lt 100 ]; then
+  if [ "$(wc -l <"$index.log")" -lt 1023 ]; then
     log=$(cat "$index.log")
   else
     log="$(tput setaf 3)WARN: $(tput sgr0)Too many logged messages"

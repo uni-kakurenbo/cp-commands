@@ -33,4 +33,4 @@ else
 fi
 
 echo "$(tput setaf 4)INFO: $(tput sgr0)Move to $(tput setaf 5)$FOUND"
-cd "$FOUND" || exit 1
+cd "$FOUND" || cd "$CALLED" || exit 1
