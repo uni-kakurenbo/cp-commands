@@ -136,7 +136,7 @@ fi
 
 if [ "$EXECUTE_COMMAND" == "" ]; then
   if [ "$EXTNAME" == "py" ]; then
-    EXECUTE_COMMAND="python3.8"
+    EXECUTE_COMMAND="pypy3"
     if [ $DEVELOPMENT_MODE == 1 ]; then
       EXECUTE_OPTIONS="LOCAL_JUDGE"
     fi
