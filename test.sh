@@ -10,6 +10,8 @@ RUNNER_OUTPUT_PATH="$TEST_PATH/res"
 
 CALLED="$PWD"
 
+BUILD_COMMAND=""
+EXECUTE_COMMAND=""
 TEST_MODE=0
 SAMPLE_INDEX=0
 TIME_LIMIT_S=2
@@ -27,6 +29,14 @@ while (($# > 0)); do
     ;;
   -D | --development-mode-off)
     DEVELOPMENT_MODE=0
+    ;;
+  -b | --builder)
+    BUILD_COMMAND="$2"
+    shift
+    ;;
+  -e | --executer)
+    EXECUTE_COMMAND="$2"
+    shift
     ;;
   -t | --timeout)
     TIME_LIMIT_S="$2"
@@ -110,29 +120,31 @@ for FILE in $TARGETS; do
 done
 EXTNAME="${FILE##*.}"
 
-BUILD_COMMAND=""
 BUILD_OPTIONS=""
-EXECUTE_COMMAND=""
 EXECUTE_OPTIONS=""
 
-if [ "$EXTNAME" == "cpp" ]; then
-  BUILD_COMMAND="$ROOT/commands/ccore.sh build_cpp $ROOT/sources/libraries"
-  if [ $DEVELOPMENT_MODE == 1 ]; then
-    BUILD_OPTIONS="-DLOCAL_JUDGE"
+if [ "$BUILD_COMMAND" == "" ]; then
+  if [ "$EXTNAME" == "cpp" ]; then
+    BUILD_COMMAND="$ROOT/commands/ccore.sh build_cpp $ROOT/sources/libraries"
+    if [ $DEVELOPMENT_MODE == 1 ]; then
+      BUILD_OPTIONS="-DLOCAL_JUDGE"
+    fi
+  else
+    BUILD_COMMAND="cp"
   fi
-else
-  BUILD_COMMAND="cp"
 fi
 
-if [ "$EXTNAME" == "py" ]; then
-  EXECUTE_COMMAND="python3.8"
-  if [ $DEVELOPMENT_MODE == 1 ]; then
-    EXECUTE_OPTIONS="LOCAL_JUDGE"
+if [ "$EXECUTE_COMMAND" == "" ]; then
+  if [ "$EXTNAME" == "py" ]; then
+    EXECUTE_COMMAND="python3.8"
+    if [ $DEVELOPMENT_MODE == 1 ]; then
+      EXECUTE_OPTIONS="LOCAL_JUDGE"
+    fi
+  elif [ "$EXTNAME" == "js" ]; then
+    EXECUTE_COMMAND="node"
+  elif [ "$EXTNAME" == "txt" ]; then
+    EXECUTE_COMMAND="cat"
   fi
-elif [ "$EXTNAME" == "js" ]; then
-  EXECUTE_COMMAND="node"
-elif [ "$EXTNAME" == "txt" ]; then
-  EXECUTE_COMMAND="cat"
 fi
 
 TARGET=$(readlink -f "$FILE")
