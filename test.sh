@@ -237,7 +237,7 @@ if [ "$PRE_PROBLEM_ID" == "$PROBLEM_ID" ] && [ "$PRE_NUM_OF_CASES" != "" ] && [ 
   NUM_OF_CASES="$PRE_NUM_OF_CASES"
 else
   {
-    CURRENT_CASE_PATH=$(find "$CACHE_PATH" -type d -name "$PROBLEM_INDEX")
+    CURRENT_CASE_PATH=$(find "$CACHE_PATH" -type d -name "$PROBLEM_ID")
     if [ "$CURRENT_CASE_PATH" == "" ]; then
       mkdir -p "$CACHE_PATH/$PROBLEM_ID"
       chmod +x "$CACHE_PATH/$PROBLEM_ID"
