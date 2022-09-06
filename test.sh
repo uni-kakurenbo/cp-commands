@@ -410,12 +410,16 @@ fi
 if [ "$AC_COUNT" = "$NUM_OF_CASES" ]; then
   echo
   echo "$(tput setaf 2)INFO: $(tput sgr0)All Cases were accepted."
-  echo "$(tput setaf 6)INFO: $(tput sgr0)Do you want to copy to the clipboard? (y/n)"
+  echo "$(tput setaf 6)INFO: $(tput sgr0)Do you want to copy to the clipboard or submit? (clp/sub/..)"
+
   read -p "$(tput setaf 8)>> $(tput sgr0)" -r input_data
-  if ! { [ "$input_data" == "y" ] || [ "$input_data" == "yes" ] || [ "$input_data" == "YES" ]; }; then
-    exit 0
-  fi
+
   cd "$ROOT" || exit 1
-  clip.exe <"$TARGET"
-  echo "$(tput setaf 6)INFO: $(tput sgr0)Copied to the clipboard: $(tput setaf 5)$(basename "$TARGET")"
+  cd ./commands || exit 1
+
+  if [ "$input_data" == "clp" ]; then
+  ./clip.sh -t "$TARGET"
+  elif [ "$input_data" == "sub" ]; then
+    ./submit.sh -t "$TARGET" -c "$CONTEST_ID" -i "$PROBLEM_ID"
+  fi
 fi
