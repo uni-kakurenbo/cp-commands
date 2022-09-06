@@ -20,7 +20,6 @@ console.log = function (...args) {
 };
 
 (async function () {
-  fs.promises.writeFile(path.join(__dirname, "./.log"), "test");
   let contest, problem;
   try {
     contest = await client.contests.fetch(contestId);
