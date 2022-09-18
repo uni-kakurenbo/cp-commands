@@ -18,6 +18,9 @@ TIME_LIMIT_S=2
 LOGGING=1
 DEVELOPMENT_MODE=1
 
+BUILD_OPTIONS=""
+EXECUTE_OPTIONS=""
+
 ARGUMENTS=("$0")
 while (($# > 0)); do
   case "$1" in
@@ -57,6 +60,17 @@ while (($# > 0)); do
   -i | --identifier)
     PROBLEM_ID="$2"
     shift
+    ;;
+  -B | --build-options)
+    BUILD_OPTIONS+=" $2"
+    shift
+    ;;
+  -E | --execute-options)
+    EXECUTE_OPTIONS+=" $2"
+    shift
+    ;;
+  -cpp-s | --sanitizer-enabled)
+    BUILD_OPTIONS+=" -fsanitize=undefined,leak,address"
     ;;
   -*)
     echo "$(tput setaf 1)ERROR: $(tput sgr0)Unexpected command option: $(tput setaf 5)$1"
@@ -108,10 +122,10 @@ source ./core/functions/is_useable.sh
 # shellcheck source=/dev/null
 source ./core/functions/min_max.sh
 
-if ! is_useable "$(dirname "$CALLED")"; then
-  echo "$(tput setaf 3)WARN: $(tput sgr0)This command cannot be used within this directory."
-  exit 1
-fi
+# if ! is_useable "$(dirname "$CALLED")"; then
+#   echo "$(tput setaf 3)WARN: $(tput sgr0)This command cannot be used within this directory."
+#   exit 1
+# fi
 
 cd "$CALLED" || exit 1
 
@@ -120,14 +134,11 @@ for FILE in $TARGETS; do
 done
 EXTNAME="${FILE##*.}"
 
-BUILD_OPTIONS=""
-EXECUTE_OPTIONS=""
-
 if [ "$BUILD_COMMAND" == "" ]; then
   if [ "$EXTNAME" == "cpp" ]; then
     BUILD_COMMAND="$ROOT/commands/ccore.sh build_cpp $ROOT/sources/libraries"
     if [ $DEVELOPMENT_MODE == 1 ]; then
-      BUILD_OPTIONS="-DLOCAL_JUDGE"
+      BUILD_OPTIONS+=" -DLOCAL_JUDGE"
     fi
   else
     BUILD_COMMAND="cp"

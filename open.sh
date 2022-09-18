@@ -16,6 +16,10 @@ if [ "$FILENAME_WITHOUT_EXT" == "$EXTNAME" ]; then
   if [ "$2" == "" ]; then
     PREV=$(find . -iname "$1*")
     if [ "$PREV" != "" ]; then
+      if [ "$(printf "%s\n" "$PREV" | wc -l)" -gt 3 ]; then
+        echo "$(tput setaf 197)ERROR: $(tput sgr0)Too many files are matched."
+        exit 1
+      fi
       # shellcheck disable=2116,2086
       echo "$(tput setaf 6)INFO: $(tput sgr0)Some files were found that already exist:$(tput setaf 5) $(echo $PREV)"
       echo "$(tput setaf 2)INFO: $(tput sgr0)Open them."
@@ -40,11 +44,11 @@ if [ "$FOUND" == "" ]; then
     exit 0
   fi
 else
-  for FILE in $FOUND; do
+  for TARGET in $FOUND; do
     break
   done
-  echo "$(tput setaf 6)INFO: $(tput sgr0)The file was found that already exist:$(tput setaf 5) $FILE"
-  code "$FILE"
+  echo "$(tput setaf 6)INFO: $(tput sgr0)The file was found that already exist:$(tput setaf 5) $TARGET"
+  code "$TARGET"
   exit 0
 fi
 
