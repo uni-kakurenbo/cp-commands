@@ -102,9 +102,23 @@ if ! [ "$PROBLEM_ID" ]; then
   PROBLEM_ID="${CONTEST_ID}_$PROBLEM_INDEX"
 fi
 
+TARGET=$(readlink -f "$TARGET")
+
 cd "$ROOT" || exit 1
 cd commands || exit 1
 
-./ccore.sh submit "$CONTEST_ID" "$PROBLEM_ID" "$TARGET" "$LANGUAGE_HINT" "$EXTNAME_LANGUAGE" || exit 1
+EXPANDER_OUTPUT_PATH="$(readlink -f ./temp/expanded.cpp)"
+EXPANDER_OUTPUT_PATH+=".$EXTNAME"
+
+if [ "$EXPAND_COMMAND" == "" ]; then
+  if [ "$EXTNAME" == "cpp" ]; then
+    EXPAND_COMMAND="$ROOT/commands/ccore.sh expand_cpp $ROOT/sources/libraries"
+  else
+    EXPAND_COMMAND="cp"
+  fi
+fi
+
+$EXPAND_COMMAND "$ROOT/sources/libraries" "$TARGET" "$EXPANDER_OUTPUT_PATH"
+./ccore.sh submit "$CONTEST_ID" "$PROBLEM_ID" "$EXPANDER_OUTPUT_PATH" "$LANGUAGE_HINT" "$EXTNAME_LANGUAGE" || exit 1
 
 echo "$(tput setaf 2)INFO: $(tput sgr0)Submitted to $(tput setaf 6)$PROBLEM_ID $(tput sgr0)at $(tput setaf 6)${CONTEST_ID}$(tput sgr0): $(tput setaf 5)$(basename "$TARGET")"

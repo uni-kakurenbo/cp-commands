@@ -1,3 +1,9 @@
+# Refer to AC-Library
+expander.py
+
+# Temporaries
+tmp/
+
 # Logs
 logs
 *.log

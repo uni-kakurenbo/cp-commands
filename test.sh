@@ -5,11 +5,13 @@ COMPILE_ERROR_PATH="$TEST_PATH/.compile-error"
 CASES_PATH="$TEST_PATH/cases"
 CACHE_PATH="$TEST_PATH/.cache"
 CASES_INFO_PATH="$CASES_PATH/.info"
+EXPANDER_OUTPUT_PATH="$TEST_PATH/exepanded"
 COMPILER_OUTPUT_PATH="$TEST_PATH/run"
 RUNNER_OUTPUT_PATH="$TEST_PATH/res"
 
 CALLED="$PWD"
 
+EXPAND_COMMAND=""
 BUILD_COMMAND=""
 EXECUTE_COMMAND=""
 TEST_MODE=0
@@ -24,24 +26,28 @@ EXECUTE_OPTIONS=""
 ARGUMENTS=("$0")
 while (($# > 0)); do
   case "$1" in
-  -h | --handmade)
+  -hand | --handmade)
     TEST_MODE=1
     ;;
-  -L | --log-off)
+  -L | --log-off | --no-log)
     LOGGING=0
     ;;
-  -D | --development-mode-off)
+  -D | --development-mode-off | --no-dev)
     DEVELOPMENT_MODE=0
     ;;
-  -b | --builder)
+  -p | --expander | --expand)
+    EXPAND_COMMAND="$2"
+    shift
+    ;;
+  -b | --build | --builder)
     BUILD_COMMAND="$2"
     shift
     ;;
-  -e | --executer)
+  -e | --exe | -executer)
     EXECUTE_COMMAND="$2"
     shift
     ;;
-  -t | --timeout)
+  -r | --time | --timeout)
     TIME_LIMIT_S="$2"
     shift
     ;;
@@ -49,7 +55,7 @@ while (($# > 0)); do
     SAMPLE_INDEX="$2"
     shift
     ;;
-  -p | --problem)
+  -t | --task | --problem)
     PROBLEM_INDEX="$2"
     shift
     ;;
@@ -57,19 +63,19 @@ while (($# > 0)); do
     CONTEST_ID="$2"
     shift
     ;;
-  -i | --identifier)
+  -i | --ident | --identifier)
     PROBLEM_ID="$2"
     shift
     ;;
-  -B | --build-options)
+  -B | --build-opt | --build-options)
     BUILD_OPTIONS+=" $2"
     shift
     ;;
-  -E | --execute-options)
+  -E | --exe-opt | --execute-options)
     EXECUTE_OPTIONS+=" $2"
     shift
     ;;
-  -cpp-s | --sanitizer-enabled)
+  --cpp-s | --sanitizer-enabled)
     BUILD_OPTIONS+=" -fsanitize=undefined,leak,address"
     ;;
   -*)
@@ -110,6 +116,7 @@ TEST_PATH=$(readlink -f "$TEST_PATH")
 COMPILE_ERROR_PATH=$(readlink -f "$COMPILE_ERROR_PATH")
 CASES_PATH=$(readlink -f "$CASES_PATH")
 CASES_INFO_PATH=$(readlink -f "$CASES_INFO_PATH")
+EXPANDER_OUTPUT_PATH=$(readlink -f "$EXPANDER_OUTPUT_PATH")
 COMPILER_OUTPUT_PATH=$(readlink -f "$COMPILER_OUTPUT_PATH")
 RUNNER_OUTPUT_PATH=$(readlink -f "$RUNNER_OUTPUT_PATH")
 
@@ -133,6 +140,16 @@ for FILE in $TARGETS; do
   break
 done
 EXTNAME="${FILE##*.}"
+
+EXPANDER_OUTPUT_PATH+=".$EXTNAME"
+
+if [ "$EXPAND_COMMAND" == "" ]; then
+  if [ "$EXTNAME" == "cpp" ]; then
+    EXPAND_COMMAND="$ROOT/commands/ccore.sh expand_cpp $ROOT/sources/libraries"
+  else
+    EXPAND_COMMAND="cp"
+  fi
+fi
 
 if [ "$BUILD_COMMAND" == "" ]; then
   if [ "$EXTNAME" == "cpp" ]; then
@@ -162,13 +179,24 @@ TARGET=$(readlink -f "$FILE")
 
 cd "$ROOT" || exit 1
 
-echo "$(tput setaf 4)INFO: $(tput sgr0)Building: $(tput setaf 5)$(basename "$TARGET")"
+echo "$(tput setaf 4)INFO: $(tput sgr0)Exepanding: $(tput setaf 5)$(basename "$TARGET")"
+{
+  tput sgr0
+
+  rm -f "$EXPANDER_OUTPUT_PATH"
+
+  # shellcheck disable=SC2086
+  $EXPAND_COMMAND "$TARGET" "$EXPANDER_OUTPUT_PATH" &>/dev/null
+}
+
+echo "$(tput setaf 4)INFO: $(tput sgr0)Building: $(tput setaf 5)$(basename "$EXPANDER_OUTPUT_PATH")"
 {
   tput sgr0
 
   rm -f "$COMPILER_OUTPUT_PATH"
 
-  $BUILD_COMMAND "$TARGET" "$COMPILER_OUTPUT_PATH" $BUILD_OPTIONS 2>"$COMPILE_ERROR_PATH" >/dev/null
+  # shellcheck disable=SC2086
+  $BUILD_COMMAND "$EXPANDER_OUTPUT_PATH" "$COMPILER_OUTPUT_PATH" $BUILD_OPTIONS 2>"$COMPILE_ERROR_PATH" >/dev/null
 } &
 
 if [ $TEST_MODE == 1 ]; then
@@ -429,8 +457,8 @@ if [ "$AC_COUNT" = "$NUM_OF_CASES" ]; then
   cd ./commands || exit 1
 
   if [ "$input_data" == "clp" ]; then
-  ./clip.sh -t "$TARGET"
+  ./clip.sh -t "$EXPANDER_OUTPUT_PATH"
   elif [ "$input_data" == "sub" ]; then
-    ./submit.sh -t "$TARGET" -c "$CONTEST_ID" -i "$PROBLEM_ID"
+    ./submit.sh -t "$EXPANDER_OUTPUT_PATH" -c "$CONTEST_ID" -i "$PROBLEM_ID"
   fi
 fi

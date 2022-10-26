@@ -1,5 +1,7 @@
 #!/bin/bash
 
+CALLED="$PWD"
+
 ARGUMENTS=("$0")
 while (($# > 0)); do
   case "$1" in
@@ -17,6 +19,8 @@ while (($# > 0)); do
   esac
   shift
 done
+
+EXTNAME=""
 
 if [ "$TARGET" == "" ]; then
   if [ $# -lt 1 ]; then
@@ -51,5 +55,32 @@ if [ "$TARGET" == "" ]; then
   done
 fi
 
-clip.exe <"$TARGET"
-echo "$(tput setaf 6)INFO: $(tput sgr0)Copied to the clipboard: $(tput setaf 5)$(basename "$TARGET")"
+EXTNAME="${TARGET##*.}"
+
+TARGET=$(readlink -f "$TARGET")
+
+cd "$(dirname "${ARGUMENTS[0]}")" || exit 1
+
+# shellcheck source=/dev/null
+source cp.env
+
+cd "$ROOT" || exit 1
+cd commands || exit 1
+
+EXPANDER_OUTPUT_PATH="$(readlink -f ./temp/expanded)"
+EXPANDER_OUTPUT_PATH+=".$EXTNAME"
+
+if [ "$EXPAND_COMMAND" == "" ]; then
+  if [ "$EXTNAME" == "cpp" ]; then
+    EXPAND_COMMAND="$ROOT/commands/ccore.sh expand_cpp $ROOT/sources/libraries"
+  else
+    EXPAND_COMMAND="cp"
+  fi
+fi
+
+$EXPAND_COMMAND "$TARGET" "$EXPANDER_OUTPUT_PATH"
+
+clip.exe <"$EXPANDER_OUTPUT_PATH"
+echo "$(tput setaf 6)INFO: $(tput sgr0)Copied to the clipboard: $(tput setaf 5)$(basename "$EXPANDER_OUTPUT_PATH")"
+
+cd "$CALLED" || exit 1

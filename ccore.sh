@@ -1,6 +1,8 @@
 #!/bin/bash
 
 cd "$(dirname "$0")" || exit 1
+
+# shellcheck source=/dev/null
 source cp.env
 
 cd "$ROOT" || exit 1
@@ -11,6 +13,9 @@ shift
 
 EXIT_CODE=0
 case $subcommand in
+expand_cpp)
+  RESPONSE="$(./expand_cpp.sh "$@")"
+  ;;
 build_cpp)
   RESPONSE="$(./build_cpp.sh "$@")"
   ;;
