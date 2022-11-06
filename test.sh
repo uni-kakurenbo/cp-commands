@@ -20,38 +20,27 @@ TIME_LIMIT_S=2
 LOGGING=1
 DEVELOPMENT_MODE=1
 
+EXPAND_OPTIONS=""
 BUILD_OPTIONS=""
 EXECUTE_OPTIONS=""
 
 ARGUMENTS=("$0")
 while (($# > 0)); do
   case "$1" in
-  -hand | --handmade)
+  -h | --handmade)
     TEST_MODE=1
     ;;
-  -L | --log-off | --no-log)
+  -L | --log-disabled | --no-log)
     LOGGING=0
     ;;
-  -D | --development-mode-off | --no-dev)
+  -D | --development-mode-disabled | --no-dev)
     DEVELOPMENT_MODE=0
-    ;;
-  -p | --expander | --expand)
-    EXPAND_COMMAND="$2"
-    shift
-    ;;
-  -b | --build | --builder)
-    BUILD_COMMAND="$2"
-    shift
-    ;;
-  -e | --exe | -executer)
-    EXECUTE_COMMAND="$2"
-    shift
     ;;
   -r | --time | --timeout)
     TIME_LIMIT_S="$2"
     shift
     ;;
-  -s | --sample)
+  -s | --sample | --sample-index)
     SAMPLE_INDEX="$2"
     shift
     ;;
@@ -63,21 +52,65 @@ while (($# > 0)); do
     CONTEST_ID="$2"
     shift
     ;;
-  -i | --ident | --identifier)
+  -i | --id | --identifier | --slug)
     PROBLEM_ID="$2"
+    shift
+    ;;
+  -p | --expand | --expander)
+    EXPAND_COMMAND="$2"
+    shift
+    ;;
+  -P | --expand-opt | --expand-options)
+    EXPAND_OPTIONS+=" $2"
+    shift
+    ;;
+  -C | --no-compress | --expand-compression-disabled)
+    EXPAND_OPTIONS+=" --no-compress"
+    shift
+    ;;
+  -b | --build | --builder)
+    BUILD_COMMAND="$2"
     shift
     ;;
   -B | --build-opt | --build-options)
     BUILD_OPTIONS+=" $2"
     shift
     ;;
+  -e | --exe | -executer)
+    EXECUTE_COMMAND="$2"
+    shift
+    ;;
   -E | --exe-opt | --execute-options)
     EXECUTE_OPTIONS+=" $2"
     shift
     ;;
-  --cpp-s | --sanitizer-enabled)
+  -cpp:s | --cpp:sanitizer-enabled)
     BUILD_OPTIONS+=" -fsanitize=undefined,leak,address"
     ;;
+  \?)
+    echo "-h    | --handmade"
+    echo
+    echo "-L    | --log-disabled | --no-log"
+    echo "-D    | --development-mode-disabled | --no-dev"
+    echo
+    echo "-r {} | --time | --timeout"
+    echo
+    echo "-c {} | --contest"
+    echo "-t {} | --task | --problem"
+    echo "-s {} | --sample | --sample-index"
+    echo "-i {} | --id | --identifier | --slug"
+    echo
+    echo "-p {} | --expand | --expander"
+    echo "-P {} | --expand-opt | --expand-options"
+    echo "-C {} | --no-compress | --expand-compression-disabled"
+    echo "-b {} | --build | --builder"
+    echo "-B {} | --build-opt | --build-options"
+    echo "-e {} | --exe | -executer"
+    echo "-E {} | --exe-opt | --execute-options"
+    echo
+    echo "-cpp:s | --cpp:sanitizer-enabled"
+    exit 0
+  ;;
   -*)
     echo "$(tput setaf 1)ERROR: $(tput sgr0)Unexpected command option: $(tput setaf 5)$1"
     exit 1
@@ -186,7 +219,7 @@ echo "$(tput setaf 4)INFO: $(tput sgr0)Exepanding: $(tput setaf 5)$(basename "$T
   rm -f "$EXPANDER_OUTPUT_PATH"
 
   # shellcheck disable=SC2086
-  $EXPAND_COMMAND "$TARGET" "$EXPANDER_OUTPUT_PATH" &>/dev/null
+  $EXPAND_COMMAND "$TARGET" "$EXPANDER_OUTPUT_PATH" $EXPAND_OPTIONS &>/dev/null
 }
 
 echo "$(tput setaf 4)INFO: $(tput sgr0)Building: $(tput setaf 5)$(basename "$EXPANDER_OUTPUT_PATH")"

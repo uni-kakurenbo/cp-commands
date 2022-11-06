@@ -3,7 +3,10 @@
 TEST_PATH=./mock-judges
 
 CALLED="$PWD"
+
 LANGUAGE_HINT="---"
+EXPAND_OPTIONS=""
+
 
 ARGUMENTS=("$0")
 while (($# > 0)); do
@@ -26,6 +29,10 @@ while (($# > 0)); do
     ;;
   -t | --target)
     TARGET="$2"
+    shift
+    ;;
+  -C | --no-compress | --expand-compression-disabled)
+    EXPAND_OPTIONS+=" --no-compress"
     shift
     ;;
   -*)
@@ -118,7 +125,8 @@ if [ "$EXPAND_COMMAND" == "" ]; then
   fi
 fi
 
-$EXPAND_COMMAND "$TARGET" "$EXPANDER_OUTPUT_PATH"
+# shellcheck disable=2086
+$EXPAND_COMMAND "$TARGET" "$EXPANDER_OUTPUT_PATH" $EXPAND_OPTIONS
 ./ccore.sh submit "$CONTEST_ID" "$PROBLEM_ID" "$EXPANDER_OUTPUT_PATH" "$LANGUAGE_HINT" "$EXTNAME_LANGUAGE" || exit 1
 
 echo "$(tput setaf 2)INFO: $(tput sgr0)Submitted to $(tput setaf 6)$PROBLEM_ID $(tput sgr0)at $(tput setaf 6)${CONTEST_ID}$(tput sgr0): $(tput setaf 5)$(basename "$TARGET")"

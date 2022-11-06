@@ -2,11 +2,17 @@
 
 CALLED="$PWD"
 
+EXPAND_OPTIONS=""
+
 ARGUMENTS=("$0")
 while (($# > 0)); do
   case "$1" in
   -t | --target)
     TARGET="$2"
+    shift
+    ;;
+  -C | --no-compress | --expand-compression-disabled)
+    EXPAND_OPTIONS+=" --no-compress"
     shift
     ;;
   -*)
@@ -23,22 +29,22 @@ done
 EXTNAME=""
 
 if [ "$TARGET" == "" ]; then
-  if [ $# -lt 1 ]; then
+  if [ ${#ARGUMENTS[@]} -lt 1 ]; then
     echo "At least one argument is required:"
     echo "1. File Name"
     echo "[2.] Extension (Default: *)"
     exit 0
   fi
-  FILE="$1"
+  FILE="${ARGUMENTS[1]}"
 
   FILENAME_WITHOUT_EXT="${FILE%.*}"
   EXTNAME="${FILE##*.}"
 
   if [ "$FILENAME_WITHOUT_EXT" == "$EXTNAME" ]; then
-    if [ "$2" == "" ]; then
+    if [ "${ARGUMENTS[2]}" == "" ]; then
       EXTNAME="*"
     else
-      EXTNAME=$2
+      EXTNAME="${ARGUMENTS[2]}"
     fi
     FILE+=.$EXTNAME
   fi
@@ -78,7 +84,8 @@ if [ "$EXPAND_COMMAND" == "" ]; then
   fi
 fi
 
-$EXPAND_COMMAND "$TARGET" "$EXPANDER_OUTPUT_PATH"
+# shellcheck disable=2086
+$EXPAND_COMMAND "$TARGET" "$EXPANDER_OUTPUT_PATH" $EXPAND_OPTIONS
 
 clip.exe <"$EXPANDER_OUTPUT_PATH"
 echo "$(tput setaf 6)INFO: $(tput sgr0)Copied to the clipboard: $(tput setaf 5)$(basename "$EXPANDER_OUTPUT_PATH")"
