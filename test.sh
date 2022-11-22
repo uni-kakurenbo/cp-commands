@@ -66,7 +66,9 @@ while (($# > 0)); do
     ;;
   -C | --no-compress | --expand-compression-disabled)
     EXPAND_OPTIONS+=" --no-compress"
-    shift
+    ;;
+  -a | --ac-lib | --expand-atcoder-library)
+    EXPAND_OPTIONS+=" --on-ac"
     ;;
   -b | --build | --builder)
     BUILD_COMMAND="$2"
@@ -102,7 +104,8 @@ while (($# > 0)); do
     echo
     echo "-p {} | --expand | --expander"
     echo "-P {} | --expand-opt | --expand-options"
-    echo "-C {} | --no-compress | --expand-compression-disabled"
+    echo "-C    | --no-compress | --expand-compression-disabled"
+    echo "-a    | --ac-lib | --expand-atcoder-library)"
     echo "-b {} | --build | --builder"
     echo "-B {} | --build-opt | --build-options"
     echo "-e {} | --exe | -executer"
