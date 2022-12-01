@@ -57,6 +57,7 @@ else
 fi
 
 cd "$(dirname "$0")" || exit 1
+# shellcheck source=/dev/null
 source cp.env
 
 cd "$ROOT" || exit 1
