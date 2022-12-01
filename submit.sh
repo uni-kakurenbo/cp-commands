@@ -35,7 +35,7 @@ while (($# > 0)); do
     EXPAND_OPTIONS+=" --no-compress"
     ;;
   -a | --ac-lib | --expand-atcoder-library)
-    EXPAND_OPTIONS+=" --on-ac"
+    EXPAND_OPTIONS+=" --acl"
     ;;
   -*)
     echo "$(tput setaf 1)ERROR: $(tput sgr0)Unexpected command option: $(tput setaf 5)$1"

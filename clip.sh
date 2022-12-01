@@ -12,7 +12,7 @@ while (($# > 0)); do
     shift
     ;;
   -a | --ac-lib | --expand-atcoder-library)
-    EXPAND_OPTIONS+=" --on-ac"
+    EXPAND_OPTIONS+=" --acl"
     ;;
   -C | --no-compress | --expand-compression-disabled)
     EXPAND_OPTIONS+=" --no-compress"

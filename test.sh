@@ -68,7 +68,7 @@ while (($# > 0)); do
     EXPAND_OPTIONS+=" --no-compress"
     ;;
   -a | --ac-lib | --expand-atcoder-library)
-    EXPAND_OPTIONS+=" --on-ac"
+    EXPAND_OPTIONS+=" --acl"
     ;;
   -b | --build | --builder)
     BUILD_COMMAND="$2"
