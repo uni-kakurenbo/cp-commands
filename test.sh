@@ -133,15 +133,7 @@ if [ ${#ARGUMENTS[@]} -lt 2 ]; then
 fi
 
 FIND_QUERY="${ARGUMENTS[1]}"
-LANGUAGE_SELECTOR=""
-
-if [ "${ARGUMENTS[2]}" != "" ]; then
-  LANGUAGE_SELECTOR=${ARGUMENTS[2]}
-else
-  if [ "$FIND_QUERY" == "a" ] || [ "$FIND_QUERY" == "b" ]; then
-    LANGUAGE_SELECTOR="py"
-  fi
-fi
+LANGUAGE_SELECTOR="*"
 
 
 if [ "$LANGUAGE_SELECTOR" = "" ]; then
