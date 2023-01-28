@@ -63,7 +63,7 @@ if [ "$TARGET" == "" ]; then
     FIND_QUERY+=".${ARGUMENTS[2]}"
   fi
 
-  TARGETS=$(find . -iname "$FIND_QUERY")
+  TARGETS=$(find . -ipath "./$FIND_QUERY")
 
   if [ "$TARGETS" == "" ]; then
     echo "$(tput setaf 3)WARN: $(tput sgr0)Source files not found: $(tput setaf 5)$FIND_QUERY"

@@ -14,7 +14,7 @@ FILENAME_WITHOUT_EXT="${FILE%.*}"
 EXTNAME="${FILE##*.}"
 if [ "$FILENAME_WITHOUT_EXT" == "$EXTNAME" ]; then
   if [ "$2" == "" ]; then
-    PREV=$(find . -iname "$1*")
+    PREV=$(find . -ipath "./$1*")
     if [ "$PREV" != "" ]; then
       if [ "$(printf "%s\n" "$PREV" | wc -l)" -gt 3 ]; then
         echo "$(tput setaf 197)ERROR: $(tput sgr0)Too many files are matched."
@@ -39,7 +39,7 @@ if [ "$FILENAME_WITHOUT_EXT" == "$EXTNAME" ]; then
   FILE+=.$EXTNAME
 fi
 
-FOUND=$(find . -iname "$FILE")
+FOUND=$(find . -ipath "./$FILE")
 if [ "$FOUND" == "" ]; then
   echo "$(tput setaf 6)INFO: $(tput sgr0)Could not find the file."
   echo "$(tput setaf 10)INFO: $(tput sgr0)Do you want to create a new file? (y/n)"

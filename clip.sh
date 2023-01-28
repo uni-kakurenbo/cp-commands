@@ -51,7 +51,7 @@ if [ "$TARGET" == "" ]; then
     FILE+=.$EXTNAME
   fi
 
-  TARGETS=$(find . -iname "$FILE")
+  TARGETS=$(find . -ipath "./$FILE")
 
   if [ "$TARGETS" == "" ]; then
     echo "$(tput setaf 3)WARN: $(tput sgr0)Source files not found: $(tput setaf 5)$FILE"
