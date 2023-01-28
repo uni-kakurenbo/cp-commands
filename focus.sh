@@ -16,7 +16,7 @@ if [ "$DIRECTORY" == 1 ]; then
 fi
 echo "$(tput setaf 6)INFO: $(tput sgr0)Contest selected: $(tput setaf 5)$SELECTED_COUNTEST"
 
-FOUND=$(find "$DIRECTORY" -ipath "./$SELECTED_COUNTEST")
+FOUND=$(find "$DIRECTORY" -iname "$SELECTED_COUNTEST")
 if [ "$FOUND" == "" ]; then
   echo "$(tput setaf 6)INFO: $(tput sgr0)Could not find the directory."
   echo "$(tput setaf 10)INFO: $(tput sgr0)Do you want to create a new directory? (y/n)"
