@@ -133,7 +133,7 @@ if [ ${#ARGUMENTS[@]} -lt 2 ]; then
 fi
 
 FIND_QUERY="${ARGUMENTS[1]}"
-LANGUAGE_SELECTOR="*"
+LANGUAGE_SELECTOR="${ARGUMENTS[2]}"
 
 
 if [ "$LANGUAGE_SELECTOR" = "" ]; then
