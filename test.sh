@@ -24,6 +24,8 @@ EXPAND_OPTIONS=""
 BUILD_OPTIONS=""
 EXECUTE_OPTIONS=""
 
+EXPAND_COMPRESS=0
+
 ARGUMENTS=("$0")
 while (($# > 0)); do
   case "$1" in
@@ -64,8 +66,8 @@ while (($# > 0)); do
     EXPAND_OPTIONS+=" $2"
     shift
     ;;
-  -C | --no-compress | --expand-compression-disabled)
-    EXPAND_OPTIONS+=" --no-compress"
+  -z | --compress | --expand-compression)
+    EXPAND_COMPRESS=1
     ;;
   -a | --ac-lib | --expand-atcoder-library)
     EXPAND_OPTIONS+=" --acl"
@@ -125,6 +127,10 @@ while (($# > 0)); do
   shift
 done
 
+if [ "$EXPAND_COMPRESS" == 0 ]; then
+    EXPAND_OPTIONS+=" --no-compress"
+fi
+
 if [ ${#ARGUMENTS[@]} -lt 2 ]; then
   echo "At least one argument is required:"
   echo "1. Filename (without extension)"
@@ -163,8 +169,8 @@ RUNNER_OUTPUT_PATH=$(readlink -f "$RUNNER_OUTPUT_PATH")
 source cp.env
 # shellcheck source=/dev/null
 source ./core/functions/indent_stdin.sh
-# shellcheck source=/dev/null
-source ./core/functions/is_useable.sh
+# # shellcheck source=/dev/null
+# source ./core/functions/is_useable.sh
 # shellcheck source=/dev/null
 source ./core/functions/min_max.sh
 
@@ -187,6 +193,7 @@ if [ "$EXPAND_COMMAND" == "" ]; then
     EXPAND_COMMAND="$ROOT/commands/ccore.sh expand_cpp $ROOT/sources/libraries"
   else
     EXPAND_COMMAND="cp"
+    EXPAND_OPTIONS=""
   fi
 fi
 
@@ -221,8 +228,6 @@ cd "$ROOT" || exit 1
 echo "$(tput setaf 4)INFO: $(tput sgr0)Exepanding: $(tput setaf 5)$(basename "$TARGET")"
 {
   tput sgr0
-
-  rm -f "$EXPANDER_OUTPUT_PATH"
 
   # shellcheck disable=SC2086
   $EXPAND_COMMAND "$TARGET" "$EXPANDER_OUTPUT_PATH" $EXPAND_OPTIONS &>/dev/null
@@ -296,6 +301,10 @@ fi
 if ! [ "$CONTEST_ID" ]; then
   CONTEST_ID=$(basename "$CALLED")
 fi
+if expr "$CONTEST_ID" : "[0-9]*$" >&/dev/null; then
+    CONTEST_ID=$(basename "$(dirname "$CALLED")")
+fi
+
 if ! [ "$PROBLEM_INDEX" ]; then
   PROBLEM_INDEX="${ARGUMENTS[1]}"
 fi
@@ -496,8 +505,8 @@ if [ "$AC_COUNT" = "$NUM_OF_CASES" ]; then
   cd ./commands || exit 1
 
   if [ "$input_data" == "clp" ]; then
-  ./clip.sh -t "$EXPANDER_OUTPUT_PATH"
+  ./clip.sh -t "$TARGET"
   elif [ "$input_data" == "sub" ]; then
-    ./submit.sh -t "$EXPANDER_OUTPUT_PATH" -c "$CONTEST_ID" -i "$PROBLEM_ID"
+    ./submit.sh -t "$TARGET" -c "$CONTEST_ID" -i "$PROBLEM_ID"
   fi
 fi

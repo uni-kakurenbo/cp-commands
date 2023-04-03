@@ -101,9 +101,15 @@ elif [ "$EXTNAME" == "txt" ]; then
   EXTNAME_LANGUAGE="Text"
 fi
 
+
 if ! [ "$CONTEST_ID" ]; then
   CONTEST_ID=$(basename "$CALLED")
 fi
+if expr "$CONTEST_ID" : "[0-9]*$" >&/dev/null; then
+    CONTEST_ID=$(basename "$(dirname "$CALLED")")
+fi
+
+
 if ! [ "$PROBLEM_INDEX" ]; then
   PROBLEM_INDEX="${ARGUMENTS[1]}"
 fi

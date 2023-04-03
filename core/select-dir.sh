@@ -12,6 +12,9 @@ DIRECTORY="$1"
 if ! is_useable "$DIRECTORY"; then
   DIRECTORY="$(dirname "$DIRECTORY")"
 fi
+if ! is_useable "$DIRECTORY"; then
+  DIRECTORY="$(dirname "$DIRECTORY")"
+fi
 
 if ! is_useable "$DIRECTORY"; then
   exit 1
