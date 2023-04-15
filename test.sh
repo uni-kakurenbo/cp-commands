@@ -416,6 +416,7 @@ function print_results() {
 
   response=$(cat "$index.res")
   response=$(echo "$response" | sed -E 's/^[[:blank:]]+|[[:blank:]]+$//')
+
   if [ "$(wc -l <"$index.log")" -lt 1023 ]; then
     log=$(cat "$index.log")
   else
@@ -443,6 +444,10 @@ function print_results() {
     echo "$(tput sgr0)$log"
   fi
   tput setaf 202
+
+  expected_output=$(echo "$expected_output" | sed -E -z 's/[ \f\n\r\t]*/ /g')
+  response=$(echo "$response" | sed -E -z 's/[ \f\n\r\t]*/ /g')
+
   if [ "$status_code" != "0" ]; then
     if [ "$status_code" == "124" ]; then
       echo "JUDGE  : TLE"
