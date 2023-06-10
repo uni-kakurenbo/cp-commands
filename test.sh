@@ -245,7 +245,8 @@ echo "$(tput setaf 4)INFO: $(tput sgr0)Building: $(tput setaf 5)$(basename "$EXP
 
 if [ $TEST_MODE == 1 ]; then
   cd "$RUNNER_OUTPUT_PATH" || exit 1
-  rm -rf ./*
+
+  rm -f .log .status .res
 
   wait
   COMPILE_ERROR=$(cat "$COMPILE_ERROR_PATH")
@@ -265,6 +266,7 @@ if [ $TEST_MODE == 1 ]; then
   {
     echo "$(tput setaf 109)INFO: $(tput sgr0)Running: $(tput sgr0)[PID:$BASHPID]"
     echo -n "$(tput setaf 8)>> $(tput sgr0)"
+    #shellcheck disable=SC2086
     $EXECUTE_COMMAND "$COMPILER_OUTPUT_PATH" $EXECUTE_OPTIONS 1>".res" 2>".log"
     echo "$?" >.status
   }
