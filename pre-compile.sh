@@ -1,6 +1,6 @@
 #! /bin/bash
 
-BITS=/usr/include/x86_64-linux-gnu/c++/9/bits
+BITS=/usr/include/x86_64-linux-gnu/c++/12/bits
 
 cd "$(dirname "$0")" || exit 1
 
@@ -10,4 +10,4 @@ source cp.env
 LIBRARY_PATH="$ROOT/sources/libraries"
 
 sudo "$ROOT/commands/ccore.sh" build_cpp "$LIBRARY_PATH" "$BITS/stdc++.h" "$BITS/stdc++.h.gch"
-sudo "$ROOT/commands/ccore.sh" build_cpp "$LIBRARY_PATH" "$LIBRARY_PATH/debugger/debug.hpp" "$LIBRARY_PATH/debugger/debug.hpp.gch"
+# sudo "$ROOT/commands/ccore.sh" build_cpp "$LIBRARY_PATH" "$LIBRARY_PATH/original/debugger/debug.hpp" "$LIBRARY_PATH/original/debugger/debug.hpp.gch"

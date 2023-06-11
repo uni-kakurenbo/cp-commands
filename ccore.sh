@@ -5,8 +5,7 @@ cd "$(dirname "$0")" || exit 1
 # shellcheck source=/dev/null
 source cp.env
 
-cd "$ROOT" || exit 1
-cd ./commands/core || exit 1
+cd ./core || exit 1
 
 subcommand="$1"
 shift

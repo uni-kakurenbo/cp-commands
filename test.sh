@@ -89,7 +89,10 @@ while (($# > 0)); do
     shift
     ;;
   -cpp:s | --cpp:sanitizer-enabled)
-    BUILD_OPTIONS+=" -fsanitize=undefined,leak,address"
+    BUILD_OPTIONS+="-fsanitize=undefined,leak,address"
+    ;&
+  -cpp:p | --cpp:polite-enabled)
+    BUILD_OPTIONS+=" -Wconversion -Wfloat-equal -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC"
     ;;
   \?)
     echo "-h    | --handmade"
@@ -230,7 +233,8 @@ echo "$(tput setaf 4)INFO: $(tput sgr0)Exepanding: $(tput setaf 5)$(basename "$T
   tput sgr0
 
   # shellcheck disable=SC2086
-  $EXPAND_COMMAND "$TARGET" "$EXPANDER_OUTPUT_PATH" $EXPAND_OPTIONS &>/dev/null
+  time $EXPAND_COMMAND "$TARGET" "$EXPANDER_OUTPUT_PATH" $EXPAND_OPTIONS &>/dev/null
+  echo
 }
 
 echo "$(tput setaf 4)INFO: $(tput sgr0)Building: $(tput setaf 5)$(basename "$EXPANDER_OUTPUT_PATH")"
@@ -240,7 +244,8 @@ echo "$(tput setaf 4)INFO: $(tput sgr0)Building: $(tput setaf 5)$(basename "$EXP
   rm -f "$COMPILER_OUTPUT_PATH"
 
   # shellcheck disable=SC2086
-  $BUILD_COMMAND "$EXPANDER_OUTPUT_PATH" "$COMPILER_OUTPUT_PATH" $BUILD_OPTIONS 2>"$COMPILE_ERROR_PATH" >/dev/null
+  time $BUILD_COMMAND "$EXPANDER_OUTPUT_PATH" "$COMPILER_OUTPUT_PATH" $BUILD_OPTIONS 2>"$COMPILE_ERROR_PATH" >/dev/null
+  echo
 } &
 
 if [ $TEST_MODE == 1 ]; then
