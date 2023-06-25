@@ -89,10 +89,10 @@ while (($# > 0)); do
     shift
     ;;
   -cpp:s | --cpp:sanitizer-enabled)
-    BUILD_OPTIONS+="-fsanitize=undefined,leak,address"
+    BUILD_OPTIONS+=" -fsanitize=undefined,leak,address"
     ;&
   -cpp:p | --cpp:polite-enabled)
-    BUILD_OPTIONS+=" -Wconversion -Wfloat-equal -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC"
+    BUILD_OPTIONS+=" -ftrapv -fstack-protector-all -Wconversion -Wfloat-equal -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC"
     ;;
   \?)
     echo "-h    | --handmade"
@@ -117,6 +117,7 @@ while (($# > 0)); do
     echo "-E {} | --exe-opt | --execute-options"
     echo
     echo "-cpp:s | --cpp:sanitizer-enabled"
+    echo "-cpp:p | --cpp:polite-enabled"
     exit 0
   ;;
   -*)
