@@ -13,13 +13,6 @@ const sorcePath = process.argv[4];
 const providedLanguageHintString = process.argv[5]?.trim();
 const defaultLanguageHintString = process.argv[6]?.trim();
 
-console.setColor = function (...args) {
-  return console;
-};
-console.log = function (...args) {
-  return console;
-};
-
 (async function () {
   const [sourceCode, contest] = await Promise.all([
     fs.promises.readFile(sorcePath, "utf8"),
@@ -50,7 +43,7 @@ console.log = function (...args) {
 
   console.info(languageHints, languageId);
 
-  await contest.submit(problemId, languageId, sourceCode);
+  await contest.submit(problemId, languageId, sourceCode)
 })().catch((e) => {
   console.error(e);
   process.exit(1);
