@@ -79,7 +79,7 @@ EXPANDER_OUTPUT_PATH="$(readlink -f ./temp/expanded)"
 EXPANDER_OUTPUT_PATH+=".$EXTNAME"
 
 if [ "$EXPAND_COMMAND" == "" ]; then
-  if [ "$EXTNAME" == "cpp" ]; then
+  if [ "$EXTNAME" == "cpp" ] || [ "$EXTNAME" == "hpp" ]; then
     EXPAND_COMMAND="$ROOT/commands/ccore.sh expand_cpp $ROOT/sources/libraries"
   else
     EXPAND_COMMAND="cp"
