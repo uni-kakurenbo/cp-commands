@@ -54,7 +54,11 @@ else
 fi
 
 if { [ "$SECOND" == "0" ] || [ "$THIRD" == "0" ]; } && [ "$PROBLEM_ID" != "" ]; then
-  URL+="/tasks/${CONTEST_ID}_$PROBLEM_ID"
+  if [ "$PROBLEM_ID" == "sub" ]; then
+    URL+="/submissions/me"
+  else
+    URL+="/tasks/${CONTEST_ID}_$PROBLEM_ID"
+  fi
 fi
 
 echo "$(tput setaf 2)INFO: $(tput sgr0)Oepn: $(tput setaf 6)$URL"
