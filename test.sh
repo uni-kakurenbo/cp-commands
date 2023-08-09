@@ -109,7 +109,7 @@ while (($# > 0)); do
     echo
     echo "-p {} | --expand | --expander"
     echo "-P {} | --expand-opt | --expand-options"
-    echo "-C    | --no-compress | --expand-compression-disabled"
+    echo "-z    | --compress | --expand-compression"
     echo "-a    | --ac-lib | --expand-atcoder-library)"
     echo "-b {} | --build | --builder"
     echo "-B {} | --build-opt | --build-options"
