@@ -11,7 +11,7 @@ EXPAND_OPTIONS=""
 ARGUMENTS=("$0")
 while (($# > 0)); do
   case "$1" in
-  -p | --problem)
+  -t | --task)
     PROBLEM_INDEX="$2"
     shift
     ;;
@@ -27,7 +27,7 @@ while (($# > 0)); do
     LANGUAGE_HINT="$2"
     shift
     ;;
-  -t | --target)
+  -f | --file)
     TARGET="$2"
     shift
     ;;
