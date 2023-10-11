@@ -518,8 +518,8 @@ if [ "$AC_COUNT" = "$NUM_OF_CASES" ]; then
   cd ./commands || exit 1
 
   if [ "$input_data" == "clp" ]; then
-  ./clip.sh -t "$TARGET"
+  ./clip.sh -f "$TARGET"
   elif [ "$input_data" == "sub" ]; then
-    ./submit.sh -t "$TARGET" -c "$CONTEST_ID" -i "$PROBLEM_ID"
+    ./submit.sh -f "$TARGET" -c "$CONTEST_ID" -i "$PROBLEM_ID"
   fi
 fi

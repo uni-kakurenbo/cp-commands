@@ -7,7 +7,7 @@ EXPAND_OPTIONS=""
 ARGUMENTS=("$0")
 while (($# > 0)); do
   case "$1" in
-  -t | --target)
+  -f | --file)
     TARGET="$2"
     shift
     ;;
