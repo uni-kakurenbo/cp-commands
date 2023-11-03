@@ -7,4 +7,4 @@ OUTPUT_PATH=$3
 
 shift 3
 
-pypy3 expander.py "$TARGET" --lib "$LIBRARY_PATH/ac-library;$LIBRARY_PATH/original;$LIBRARY_PATH/original/debugger;$LIBRARY_PATH/original/adapter" --console "$@" > "$OUTPUT_PATH"
+pypy3 expander.py "$TARGET" --lib "$LIBRARY_PATH/ac-library;$LIBRARY_PATH/original/src;$LIBRARY_PATH/original/src/debugger;$LIBRARY_PATH/original/src/adapter" --console "$@" > "$OUTPUT_PATH"

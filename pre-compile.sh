@@ -13,4 +13,4 @@ sudo rm "$BITS/stdc++.h.gch"
 
 
 # sudo "$ROOT/commands/ccore.sh" build_cpp "$LIBRARY_PATH" "$BITS/stdc++.h" "$BITS/stdc++.h.gch"
-# sudo "$ROOT/commands/ccore.sh" build_cpp "$LIBRARY_PATH" "$LIBRARY_PATH/original/debugger/debug.hpp" "$LIBRARY_PATH/original/debugger/debug.hpp.gch"
+# sudo "$ROOT/commands/ccore.sh" build_cpp "$LIBRARY_PATH" "$LIBRARY_PATH/original/src/debugger/debug.hpp" "$LIBRARY_PATH/original/src/debugger/debug.hpp.gch"
