@@ -92,7 +92,7 @@ while (($# > 0)); do
     BUILD_OPTIONS+=" -fsanitize=undefined,leak,address"
     ;&
   -cpp:p | --cpp:polite-enabled)
-    BUILD_OPTIONS+=" -ftrapv -fstack-protector-all -Wconversion -Wfloat-equal -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC"
+    BUILD_OPTIONS+=" -ftrapv -fstack-protector-all -Wconversion -Wfloat-equal -D_GLIBCXX_DEBUG"
     ;;
   \?)
     echo "-h    | --handmade"
