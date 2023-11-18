@@ -114,7 +114,7 @@ if ! [ "$PROBLEM_INDEX" ]; then
   PROBLEM_INDEX="${ARGUMENTS[1]}"
 fi
 if ! [ "$PROBLEM_ID" ]; then
-  PROBLEM_ID="${CONTEST_ID}_$PROBLEM_INDEX"
+  PROBLEM_ID="${CONTEST_ID//-/_}_$PROBLEM_INDEX"
 fi
 
 TARGET=$(readlink -f "$TARGET")

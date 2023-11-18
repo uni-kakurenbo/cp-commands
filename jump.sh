@@ -57,7 +57,7 @@ if { [ "$SECOND" == "0" ] || [ "$THIRD" == "0" ]; } && [ "$PROBLEM_ID" != "" ]; 
   if [ "$PROBLEM_ID" == "sub" ]; then
     URL+="/submissions/me"
   else
-    URL+="/tasks/${CONTEST_ID}_$PROBLEM_ID"
+    URL+="/tasks/${CONTEST_ID//-/_}_$PROBLEM_ID"
   fi
 fi
 

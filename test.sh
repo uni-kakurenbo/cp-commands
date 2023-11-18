@@ -25,6 +25,7 @@ BUILD_OPTIONS=""
 EXECUTE_OPTIONS=""
 
 EXPAND_COMPRESS=0
+FORCE=false
 
 ARGUMENTS=("$0")
 while (($# > 0)); do
@@ -57,6 +58,9 @@ while (($# > 0)); do
   -i | --id | --identifier | --slug)
     PROBLEM_ID="$2"
     shift
+    ;;
+  -f | --force)
+    FORCE=true
     ;;
   -p | --expand | --expander)
     EXPAND_COMMAND="$2"
@@ -106,6 +110,7 @@ while (($# > 0)); do
     echo "-t {} | --task | --problem"
     echo "-s {} | --sample | --sample-index"
     echo "-i {} | --id | --identifier | --slug"
+    echo "-f    | --force"
     echo
     echo "-p {} | --expand | --expander"
     echo "-P {} | --expand-opt | --expand-options"
@@ -130,10 +135,6 @@ while (($# > 0)); do
   esac
   shift
 done
-
-if [ "$EXPAND_COMPRESS" == 0 ]; then
-    EXPAND_OPTIONS+=" --no-compress"
-fi
 
 if [ ${#ARGUMENTS[@]} -lt 2 ]; then
   echo "At least one argument is required:"
@@ -195,11 +196,14 @@ EXPANDER_OUTPUT_PATH+=".$EXTNAME"
 if [ "$EXPAND_COMMAND" == "" ]; then
   if [ "$EXTNAME" == "cpp" ]; then
     EXPAND_COMMAND="$ROOT/commands/ccore.sh expand_cpp $ROOT/sources/libraries"
+    if [ "$EXPAND_COMPRESS" == 0 ]; then
+        EXPAND_OPTIONS+=" --no-compress"
+    fi
   else
     EXPAND_COMMAND="cp"
-    EXPAND_OPTIONS=""
   fi
 fi
+
 
 if [ "$BUILD_COMMAND" == "" ]; then
   if [ "$EXTNAME" == "cpp" ]; then
@@ -232,9 +236,10 @@ cd "$ROOT" || exit 1
 echo "$(tput setaf 4)INFO: $(tput sgr0)Exepanding: $(tput setaf 5)$(basename "$TARGET")"
 {
   tput sgr0
+  touch "$EXPANDER_OUTPUT_PATH"
 
   # shellcheck disable=SC2086
-  time $EXPAND_COMMAND "$TARGET" "$EXPANDER_OUTPUT_PATH" $EXPAND_OPTIONS &>/dev/null
+  time $EXPAND_COMMAND "$TARGET" "$EXPANDER_OUTPUT_PATH" $EXPAND_OPTIONS >/dev/null
   echo
 }
 
@@ -317,7 +322,7 @@ if ! [ "$PROBLEM_INDEX" ]; then
   PROBLEM_INDEX="${ARGUMENTS[1]}"
 fi
 if ! [ "$PROBLEM_ID" ]; then
-  PROBLEM_ID="${CONTEST_ID}_$PROBLEM_INDEX"
+  PROBLEM_ID="${CONTEST_ID//-/_}_$PROBLEM_INDEX"
 fi
 
 cd ./commands || exit 1
@@ -327,20 +332,25 @@ touch "$CASES_INFO_PATH"
 PRE_PROBLEM_ID=$(head -n 1 "$CASES_INFO_PATH")
 PRE_NUM_OF_CASES=$(head -n 2 "$CASES_INFO_PATH" | tail -n 1)
 
-if [ "$PRE_PROBLEM_ID" == "$PROBLEM_ID" ] && [ "$PRE_NUM_OF_CASES" != "" ] && [ "$PRE_NUM_OF_CASES" != "0" ]; then
+if [ "$PRE_PROBLEM_ID" == "$PROBLEM_ID" ] && [ "$PRE_NUM_OF_CASES" != "" ] && [ "$PRE_NUM_OF_CASES" != "0" ] && [ "$FORCE" != 'true' ]; then
   echo "$(tput setaf 6)INFO: $(tput sgr0)Previous cases will be used directly."
   NUM_OF_CASES="$PRE_NUM_OF_CASES"
 else
   {
     CURRENT_CASE_PATH=$(find "$CACHE_PATH" -type d -name "$PROBLEM_ID")
-    if [ "$CURRENT_CASE_PATH" == "" ]; then
+    if [ "$CURRENT_CASE_PATH" == "" ] || [ "$PRE_NUM_OF_CASES" == "0" ] || [ "$FORCE" == 'true' ]; then
       mkdir -p "$CACHE_PATH/$PROBLEM_ID"
       chmod +x "$CACHE_PATH/$PROBLEM_ID"
       CURRENT_CASE_PATH=$(readlink -e "$CACHE_PATH/$PROBLEM_ID/")
 
       NUM_OF_CASES=$(./ccore.sh sample "$CONTEST_ID" "$PROBLEM_ID" "$CURRENT_CASE_PATH")
 
-      echo "$(tput setaf 6)INFO: $(tput sgr0)Cached cases was not exist."
+      if [ "$FORCE" != 'true' ]; then
+        echo "$(tput setaf 6)INFO: $(tput sgr0)Cached cases was not exist."
+      else
+        echo "$(tput setaf 6)INFO: $(tput sgr0)Cached cases was ignored."
+      fi
+
       echo "$(tput setaf 2)INFO: $(tput sgr0)Scrape from the web page."
 
       echo "$PROBLEM_ID" >"$CURRENT_CASE_PATH/.info"
