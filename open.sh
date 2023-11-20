@@ -28,7 +28,7 @@ if [ "$FILENAME_WITHOUT_EXT" == "$EXTNAME" ]; then
       done
       exit 0
     fi
-    if [ "$FILE" == "a" ] || [ "$FILE" == "b" ]; then
+    if [[ "$CALLED" == *"abc"* ]] && { [ "$FILE" == "a" ] || [ "$FILE" == "b" ]; } then
         EXTNAME="py"
     else
         EXTNAME="cpp"

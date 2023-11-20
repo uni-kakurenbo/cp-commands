@@ -239,7 +239,7 @@ echo "$(tput setaf 4)INFO: $(tput sgr0)Exepanding: $(tput setaf 5)$(basename "$T
   touch "$EXPANDER_OUTPUT_PATH"
 
   # shellcheck disable=SC2086
-  time $EXPAND_COMMAND "$TARGET" "$EXPANDER_OUTPUT_PATH" $EXPAND_OPTIONS >/dev/null
+  time $EXPAND_COMMAND "$TARGET" "$EXPANDER_OUTPUT_PATH" $EXPAND_OPTIONS &>/dev/null
   echo
 }
 
