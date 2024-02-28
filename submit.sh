@@ -1,7 +1,5 @@
 #! /bin/bash
 
-TEST_PATH=./mock-judges
-
 CALLED="$PWD"
 
 LANGUAGE_HINT="---"
