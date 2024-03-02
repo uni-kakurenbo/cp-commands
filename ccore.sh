@@ -13,20 +13,20 @@ shift
 EXIT_CODE=0
 case $subcommand in
 expand_cpp)
-  RESPONSE="$(./expand_cpp.sh "$@")"
-  ;;
+    RESPONSE="$(./expand_cpp.sh "$@")"
+    ;;
 build_cpp)
-  RESPONSE="$(./build_cpp.sh "$@")"
-  ;;
+    RESPONSE="$(./build_cpp.sh "$@")"
+    ;;
 select-dir)
-  RESPONSE="$(./select-dir.sh "$@")"
-  ;;
+    RESPONSE="$(./select-dir.sh "$@")"
+    ;;
 sample)
-  RESPONSE="$(node ./scrape-sample-cases.js "$@")"
-  ;;
+    RESPONSE="$(node ./scrape-sample-cases.js "$@")"
+    ;;
 submit)
-  RESPONSE="$(node ./submit-code.js "$@")"
-  ;;
+    RESPONSE="$(node ./submit-code.js "$@")"
+    ;;
 esac
 EXIT_CODE=$?
 
