@@ -19,6 +19,7 @@ SAMPLE_INDEX=0
 TIME_LIMIT_S=2
 LOGGING=1
 DEVELOPMENT_MODE=1
+NO_LIMIT_LOG=false
 
 EXPAND_OPTIONS=""
 BUILD_OPTIONS=""
@@ -38,6 +39,9 @@ while (($# > 0)); do
         ;;
     -D | --development-mode-disabled | --no-dev)
         DEVELOPMENT_MODE=0
+        ;;
+    -K | --no-log-limit)
+        NO_LIMIT_LOG=true
         ;;
     -r | --time | --timeout)
         TIME_LIMIT_S="$2"
@@ -103,6 +107,7 @@ while (($# > 0)); do
         echo
         echo "-L    | --log-disabled | --no-log"
         echo "-D    | --development-mode-disabled | --no-dev"
+        echo "-K    | --no-log-limit"
         echo
         echo "-r {} | --time | --timeout"
         echo
@@ -284,7 +289,7 @@ if [ $TEST_MODE == 1 ]; then
     response=$(cat .res)
     response=$(echo "$response" | sed -E 's/^[[:blank:]]+|[[:blank:]]+$//')
 
-    if [ "$(wc -l <.log)" -lt 1023 ]; then
+    if [[ "$(wc -l <.log)" -lt 1024 || ${NO_LIMIT_LOG} ]]; then
         log=$(cat ".log")
     else
         log="$(tput setaf 3)WARN: $(tput sgr0)Too many logged messages"
