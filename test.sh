@@ -438,7 +438,7 @@ function print_results() {
     response=$(cat "$index.res")
     response=$(echo "$response" | sed -E 's/^[[:blank:]]+|[[:blank:]]+$//')
 
-    if [ "$(wc -l <"$index.log")" -lt 1023 ]; then
+    if [[ "$(wc -l <"$index.log")" -lt 1024 || ${NO_LIMIT_LOG} ]]; then
         log=$(cat "$index.log")
     else
         log="$(tput setaf 3)WARN: $(tput sgr0)Too many logged messages"
