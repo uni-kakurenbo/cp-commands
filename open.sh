@@ -14,7 +14,7 @@ FILENAME_WITHOUT_EXT="${FILE%.*}"
 EXTNAME="${FILE##*.}"
 if [ "$FILENAME_WITHOUT_EXT" == "$EXTNAME" ]; then
     if [ "$2" == "" ]; then
-        PREV=$(find . -ipath "./$1*")
+        PREV=$(find . -ipath "./$1.*")
         if [ "$PREV" != "" ]; then
             if [ "$(printf "%s\n" "$PREV" | wc -l)" -gt 3 ]; then
                 echo "$(tput setaf 197)ERROR: $(tput sgr0)Too many files are matched."
