@@ -8,7 +8,7 @@ from os import getenv, environ, pathsep
 from pathlib import Path
 from typing import List, Set, Optional
 
-LIB_ROOT = "/home/uni_kakurenbo/CompetitiveProgramming/sources/libraries/"
+DEFAULT_LIB_ROOT = "/home/uni_kakurenbo/CompetitiveProgramming/sources/libraries/"
 logger = getLogger(__name__)  # type: Logger
 
 class Expander:
@@ -37,10 +37,11 @@ class Expander:
         if "//" not in line: return line
         return line[:line.find("//")]
 
-    def __init__(self, lib_paths: List[Path], compress : bool, acl : bool):
+    def __init__(self, lib_paths: List[Path], compress : bool, acl : bool, root : str):
         self.lib_paths = lib_paths
         self.compress = compress
         self.acl = acl
+        self.root = root;
 
     included = set()  # type: Set[Path]
 
@@ -53,7 +54,7 @@ class Expander:
         raise FileNotFoundError()
 
     def expand_lib(self, acl_file_path: Path) -> str:
-        module = acl_file_path.relative_to(LIB_ROOT)
+        module = acl_file_path.relative_to(self.root)
         if str(module).startswith("original/"): module = module.relative_to("original/")
 
         if acl_file_path in self.included:
@@ -149,6 +150,7 @@ if __name__ == "__main__":
     parser.add_argument('--acl',
                         action='store_true', help='Expand ACL')
     parser.add_argument('--lib', help='Path to Atcoder Library')
+    parser.add_argument('--root', help='Root of library', default=DEFAULT_LIB_ROOT)
     opts = parser.parse_args()
 
     lib_paths = []
@@ -158,7 +160,7 @@ if __name__ == "__main__":
         lib_paths.extend(
             map(Path, filter(None, environ['CPLUS_INCLUDE_PATH'].split(pathsep))))
     lib_paths.append(Path.cwd())
-    expander = Expander(lib_paths, opts.no_compress, opts.acl)
+    expander = Expander(lib_paths, opts.no_compress, opts.acl, opts.root)
     source = open(opts.source).read()
     output = expander.expand(source, Path(opts.source))
 
