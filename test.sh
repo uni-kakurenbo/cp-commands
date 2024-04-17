@@ -97,7 +97,7 @@ while (($# > 0)); do
         shift
         ;;
     -cpp:s | --cpp:sanitizer-enabled)
-        BUILD_OPTIONS+=" -fsanitize=undefined,leak,address"
+        BUILD_OPTIONS+=" -fsanitize=undefined,leak,address -fsanitize-address-use-after-scope"
         ;&
     -cpp:p | --cpp:polite-enabled)
         BUILD_OPTIONS+=" -ftrapv -fstack-protector-all -Wconversion -Wfloat-equal -D_GLIBCXX_DEBUG"
@@ -157,7 +157,11 @@ else
     FIND_QUERY+=".$LANGUAGE_SELECTOR"
 fi
 
-TARGETS=$(find . -ipath "./$FIND_QUERY")
+if ! [[ $FIND_QUERY = ./* ]]; then
+    FIND_QUERY="./${FIND_QUERY}"
+fi
+
+TARGETS=$(find . -ipath "$FIND_QUERY")
 
 if [ "$TARGETS" == "" ]; then
     echo "$(tput setaf 3)WARN: $(tput sgr0)Source files not found: $(tput setaf 5)$FIND_QUERY"

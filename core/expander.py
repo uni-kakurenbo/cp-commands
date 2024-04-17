@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 
+import argparse
 import re
 import sys
-import argparse
 from logging import Logger, basicConfig, getLogger
-from os import getenv, environ, pathsep
+from os import environ, getenv, pathsep
 from pathlib import Path
-from typing import List, Set, Optional
+from typing import List, Optional, Set
 
 DEFAULT_LIB_ROOT = "/home/uni_kakurenbo/CompetitiveProgramming/sources/libraries/"
 logger = getLogger(__name__)  # type: Logger
+
 
 class Expander:
     atcoder_include = re.compile(r'\s*#include\s*["<](atcoder/[a-z_]*(|.hpp))[">]\s*')
@@ -37,11 +38,11 @@ class Expander:
         if "//" not in line: return line
         return line[:line.find("//")]
 
-    def __init__(self, lib_paths: List[Path], compress : bool, acl : bool, root : str):
+    def __init__(self, lib_paths: List[Path], compress: bool, acl: bool, root: str):
         self.lib_paths = lib_paths
         self.compress = compress
         self.acl = acl
-        self.root = root;
+        self.root = root
 
     included = set()  # type: Set[Path]
 
@@ -55,7 +56,7 @@ class Expander:
 
     def expand_lib(self, acl_file_path: Path) -> str:
         module = acl_file_path.relative_to(self.root)
-        if str(module).startswith("original/"): module = module.relative_to("original/")
+        if str(module).startswith("uni/"): module = module.relative_to("uni/")
 
         if acl_file_path in self.included:
             logger.info('already included: {}'.format(module))
@@ -81,7 +82,7 @@ class Expander:
                 name = m.group(1)
                 result.append("\n")
                 result.extend(self.expand_lib(self.find_lib(name)))
-                if not self.compress: result.append("\n#line {} \"{}\"".format(row+1, module))
+                if not self.compress: result.append("\n#line {} \"{}\"".format(row + 1, module))
                 continue
 
             m = self.atcoder_include.match(line)
@@ -89,7 +90,7 @@ class Expander:
                 name = m.group(1)
                 result.append("\n")
                 result.extend(self.expand_lib(self.find_lib(name)))
-                if not self.compress: result.append("\n#line {} \"{}\"".format(row+1, module))
+                if not self.compress: result.append("\n#line {} \"{}\"".format(row + 1, module))
                 continue
 
             if self.compress:
@@ -111,7 +112,7 @@ class Expander:
             result = re.sub('\n+', '\n', result)
         return result
 
-    def expand(self, source: str, path : Path) -> str:
+    def expand(self, source: str, path: Path) -> str:
         self.included = set()
 
         result = []  # type: List[str]
@@ -122,18 +123,19 @@ class Expander:
             if m:
                 acl_path = self.find_lib(m.group(1))
                 result.append(self.expand_lib(acl_path))
-                if not self.compress: result.append("#line {} \"{}\"".format(row+1, path))
+                if not self.compress: result.append("#line {} \"{}\"".format(row + 1, path))
                 continue
 
             m = self.atcoder_include.match(line)
             if self.acl and m:
                 acl_path = self.find_lib(m.group(1))
                 result.append(self.expand_lib(acl_path))
-                if not self.compress: result.append("#line {} \"{}\"".format(row+1, path))
+                if not self.compress: result.append("#line {} \"{}\"".format(row + 1, path))
                 continue
 
             result.append(line)
         return '\n'.join(result).strip()
+
 
 if __name__ == "__main__":
     basicConfig(
@@ -143,12 +145,9 @@ if __name__ == "__main__":
     )
     parser = argparse.ArgumentParser(description='Expander')
     parser.add_argument('source', help='Source File')
-    parser.add_argument('-c', '--console',
-                        action='store_true', help='Print to Console')
-    parser.add_argument('--no-compress',
-                        action='store_false', help='Disable compression')
-    parser.add_argument('--acl',
-                        action='store_true', help='Expand ACL')
+    parser.add_argument('-c', '--console', action='store_true', help='Print to Console')
+    parser.add_argument('--no-compress', action='store_false', help='Disable compression')
+    parser.add_argument('--acl', action='store_true', help='Expand ACL')
     parser.add_argument('--lib', help='Path to Atcoder Library')
     parser.add_argument('--root', help='Root of library', default=DEFAULT_LIB_ROOT)
     opts = parser.parse_args()
@@ -157,8 +156,7 @@ if __name__ == "__main__":
     if opts.lib:
         lib_paths.extend(map(Path, opts.lib.split(";")))
     if 'CPLUS_INCLUDE_PATH' in environ:
-        lib_paths.extend(
-            map(Path, filter(None, environ['CPLUS_INCLUDE_PATH'].split(pathsep))))
+        lib_paths.extend(map(Path, filter(None, environ['CPLUS_INCLUDE_PATH'].split(pathsep))))
     lib_paths.append(Path.cwd())
     expander = Expander(lib_paths, opts.no_compress, opts.acl, opts.root)
     source = open(opts.source).read()
