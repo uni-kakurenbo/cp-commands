@@ -128,6 +128,8 @@ if [ "$EXPAND_COMMAND" == "" ]; then
     fi
 fi
 
+sleep 2
+
 # shellcheck disable=2086
 $EXPAND_COMMAND "$TARGET" "$EXPANDER_OUTPUT_PATH" $EXPAND_OPTIONS
 ./ccore.sh submit "$CONTEST_ID" "$PROBLEM_ID" "$EXPANDER_OUTPUT_PATH" "$LANGUAGE_HINT" "$EXTNAME_LANGUAGE" || exit 1
