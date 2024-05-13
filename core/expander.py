@@ -68,6 +68,7 @@ class Expander:
         acl_source = open(str(acl_file_path)).read()
 
         prev = "#"
+        new_line = False
         result = [f"/* [begin]: { module } */\n"]  # type: List[str]
 
         if not self.compress: result.append("#line 1 \"{}\"".format(module))
@@ -97,9 +98,16 @@ class Expander:
                 if not line: continue
                 line = self.remove_comments(line)
                 line = re.sub(r'\s+', " ", line).strip()
-                if prev.find("#") == 0 or line.find("#") == 0: result.append("\n")
-                else: result.append(" ")
-            else: result.append("\n")
+                if prev.endswith('\\'):
+                    result[-1] = result[-1][:-1]
+                    new_line = True
+                elif new_line or prev.find("#") == 0 or line.find("#") == 0:
+                    result.append("\n")
+                    new_line = False
+                else:
+                    result.append(" ")
+            else:
+                result.append("\n")
 
             result.append(line)
             prev = line.strip()
