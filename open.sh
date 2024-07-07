@@ -28,11 +28,7 @@ if [ "$FILENAME_WITHOUT_EXT" == "$EXTNAME" ]; then
             done
             exit 0
         fi
-        if [[ "$CALLED" == *"abc"* ]] && { [ "$FILE" == "a" ] || [ "$FILE" == "b" ]; }; then
-            EXTNAME="py"
-        else
-            EXTNAME="cpp"
-        fi
+        EXTNAME="cpp"
     else
         EXTNAME=$2
     fi
@@ -68,5 +64,5 @@ TEMPLATE=$(readlink -f "./sources/templates/template.$EXTNAME")
 cd "$CALLED" || exit 1
 
 echo "$(tput setaf 2)INFO: $(tput sgr0)Create a new file and open it: $(tput setaf 5)$FILE"
-cp -n "$TEMPLATE" "./$FILE"
+cp --update=none "$TEMPLATE" "./$FILE"
 code "$FILE"
