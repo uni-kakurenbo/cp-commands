@@ -11,7 +11,22 @@ OUTPUT_PATH=$3
 shift 3
 
 # Regulaer
-ccache g++ -std=gnu++20 -fdiagnostics-color=always -Wno-misleading-indentation -Wall -Wextra -Wdangling-reference -fdiagnostics-all-candidates -fconcepts-diagnostics-depth=5 -Wno-char-subscripts -fsplit-stack -I"$HOME/boost" -I"$LIBRARY_PATH/ac-library" -I"$LIBRARY_PATH/uni" -I"$LIBRARY_PATH/uni/debugger" -o "$OUTPUT_PATH" "$@" "$TARGET"
+# echo "$LIBRARY_PATH/benchmark/include/"
+ccache g++ \
+    "$TARGET" \
+    -std=gnu++23 \
+    -fdiagnostics-color=always \
+    -Wno-misleading-indentation \
+    -Wall -Wextra -Wdangling-reference \
+    -fdiagnostics-all-candidates -fconcepts-diagnostics-depth=5 \
+    -Wno-char-subscripts \
+    -fsplit-stack \
+    -I"$HOME/boost/" \
+    -I"$LIBRARY_PATH/ac-library/" \
+    -I"$LIBRARY_PATH/uni/" \
+    -I"$LIBRARY_PATH/uni/debugger/" \
+    -isystem "$LIBRARY_PATH/benchmark/include/" -L"$LIBRARY_PATH/benchmark/build/src/" -lbenchmark \
+    -o "$OUTPUT_PATH" "$@"
 
 # JOI
 # ccache g++ -std=gnu++20 -fdiagnostics-color=always -Wno-misleading-indentation -Wall -Wextra -fconcepts-diagnostics-depth=5 -Wno-char-subscripts -fsplit-stack -march=native -O2 -pipe -static -s -I"$LIBRARY_PATH/uni" -o "$OUTPUT_PATH" "$@" "$TARGET"
