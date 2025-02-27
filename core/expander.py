@@ -8,7 +8,7 @@ from os import environ, getenv, pathsep
 from pathlib import Path
 from typing import List, Optional, Set
 
-DEFAULT_LIB_ROOT = "/home/uni_kakurenbo/CompetitiveProgramming/sources/libraries/"
+DEFAULT_LIB_ROOT = "/home/uni_kakurenbo/Main/CompetitiveProgramming/sources/libraries/"
 logger = getLogger(__name__)  # type: Logger
 
 
