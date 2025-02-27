@@ -5,7 +5,7 @@ COMPILE_ERROR_PATH="$TEST_PATH/.compile-error"
 CASES_PATH="$TEST_PATH/cases"
 CACHE_PATH="$TEST_PATH/.cache"
 CASES_INFO_PATH="$CASES_PATH/.info"
-EXPANDER_OUTPUT_PATH="$TEST_PATH/exepanded"
+EXPANDER_OUTPUT_PATH="$TEST_PATH/expanded"
 COMPILER_OUTPUT_PATH="$TEST_PATH/run"
 RUNNER_OUTPUT_PATH="$TEST_PATH/res"
 
@@ -391,7 +391,7 @@ if [ "$NUM_OF_CASES" -lt 1 ]; then
     exit 1
 fi
 
-cd "$RUNNER_OUTPUT_PATH" || exit 1
+mkdir -p "$RUNNER_OUTPUT_PATH" && cd "$RUNNER_OUTPUT_PATH" || exit 1
 rm -rf ./*
 
 function test_sample_case() {

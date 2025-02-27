@@ -91,7 +91,7 @@ EXTNAME_LANGUAGE="---"
 if [ "$EXTNAME" == "cpp" ]; then
     EXTNAME_LANGUAGE="C++ GCC"
 elif [ "$EXTNAME" == "py" ]; then
-    EXTNAME_LANGUAGE="PyPy3"
+    EXTNAME_LANGUAGE="PyPy"
 elif [ "$EXTNAME" == "js" ]; then
     EXTNAME_LANGUAGE="JavaScript"
 elif [ "$EXTNAME" == "txt" ]; then
@@ -117,6 +117,8 @@ TARGET=$(readlink -f "$TARGET")
 cd "$ROOT" || exit 1
 cd commands || exit 1
 
+mkdir -p temp
+
 EXPANDER_OUTPUT_PATH="$(readlink -f ./temp/expanded)"
 EXPANDER_OUTPUT_PATH+=".$EXTNAME"
 
@@ -134,6 +136,9 @@ sleep 2 &
 $EXPAND_COMMAND "$TARGET" "$EXPANDER_OUTPUT_PATH" $EXPAND_OPTIONS &
 
 wait
+
+echo "${LANGUAGE_HINT}"
+echo "${EXTNAME_LANGUAGE}"
 
 ./ccore.sh submit "$CONTEST_ID" "$PROBLEM_ID" "$EXPANDER_OUTPUT_PATH" "$LANGUAGE_HINT" "$EXTNAME_LANGUAGE" || exit 1
 
