@@ -75,7 +75,7 @@ source cp.env
 cd "$ROOT" || exit 1
 cd commands || exit 1
 
-EXPANDER_OUTPUT_PATH="$(readlink -f ./temp/expanded)"
+EXPANDER_OUTPUT_PATH="$(readlink -f ./mock-judges/expanded)"
 EXPANDER_OUTPUT_PATH+=".$EXTNAME"
 
 if [ "$EXPAND_COMMAND" == "" ]; then
