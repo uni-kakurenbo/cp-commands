@@ -202,7 +202,7 @@ EXTNAME="${FILE##*.}"
 EXPANDER_OUTPUT_PATH+=".$EXTNAME"
 
 if [ "$EXPAND_COMMAND" == "" ]; then
-    if [ "$EXTNAME" == "cpp" ]; then
+    if [[ "$EXTNAME" == "cpp" || "$EXTNAME" == "cxx" ]]; then
         EXPAND_COMMAND="$ROOT/commands/ccore.sh expand_cpp $ROOT/sources/libraries"
         if [ "$EXPAND_COMPRESS" == 0 ]; then
             EXPAND_OPTIONS+=" --no-compress"
@@ -213,7 +213,7 @@ if [ "$EXPAND_COMMAND" == "" ]; then
 fi
 
 if [ "$BUILD_COMMAND" == "" ]; then
-    if [ "$EXTNAME" == "cpp" ]; then
+    if [[ "$EXTNAME" == "cpp" || "$EXTNAME" == "cxx" ]]; then
         BUILD_COMMAND="$ROOT/commands/ccore.sh build_cpp $ROOT/sources/libraries"
         if [ $DEVELOPMENT_MODE == 1 ]; then
             BUILD_OPTIONS+=" -DLOCAL_JUDGE"
