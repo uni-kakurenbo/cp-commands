@@ -2,6 +2,7 @@
 
 CALLED="$PWD"
 
+WRITE_PATH=""
 EXPAND_OPTIONS=""
 
 ARGUMENTS=("$0")
@@ -16,6 +17,10 @@ while (($# > 0)); do
         ;;
     -C | --no-compress | --expand-compression-disabled)
         EXPAND_OPTIONS+=" --no-compress"
+        ;;
+    -w | --write)
+        WRITE_PATH=$(readlink -f "${2:-out.txt}")
+        shift
         ;;
     -*)
         echo "$(tput setaf 1)ERROR: $(tput sgr0)Unexpected command option: $(tput setaf 5)$1"
@@ -88,6 +93,10 @@ fi
 
 # shellcheck disable=2086
 $EXPAND_COMMAND "$TARGET" "$EXPANDER_OUTPUT_PATH" $EXPAND_OPTIONS
+
+if [ "${WRITE_PATH}" != "" ]; then
+    cp "${EXPANDER_OUTPUT_PATH}" "${WRITE_PATH}"
+fi
 
 clip.exe <"$EXPANDER_OUTPUT_PATH"
 echo "$(tput setaf 6)INFO: $(tput sgr0)Copied to the clipboard: $(tput setaf 5)$(basename "$EXPANDER_OUTPUT_PATH")"
