@@ -19,7 +19,7 @@ while (($# > 0)); do
         EXPAND_OPTIONS+=" --no-compress"
         ;;
     -w | --write)
-        WRITE_PATH=$(readlink -f "${2:-out.txt}")
+        WRITE_PATH=$(readlink -f "${2:-out.cpp}")
         shift
         ;;
     -*)
@@ -84,7 +84,7 @@ EXPANDER_OUTPUT_PATH="$(readlink -f ./mock-judges/expanded)"
 EXPANDER_OUTPUT_PATH+=".$EXTNAME"
 
 if [ "$EXPAND_COMMAND" == "" ]; then
-    if [ "$EXTNAME" == "cpp" ] || [ "$EXTNAME" == "hpp" ]; then
+    if [ "$EXTNAME" == "cpp" ] || [ "$EXTNAME" == "cxx" ] || [ "$EXTNAME" == "hpp" ]; then
         EXPAND_COMMAND="$ROOT/commands/ccore.sh expand_cpp $ROOT/sources/libraries"
     else
         EXPAND_COMMAND="cp"
