@@ -16,16 +16,22 @@ ccache g++ \
     "$TARGET" \
     -std=gnu++23 \
     -fdiagnostics-color=always \
-    -Wno-misleading-indentation \
     -Wall -Wextra -Wdangling-reference \
     -fdiagnostics-all-candidates -fconcepts-diagnostics-depth=5 \
     -Wno-char-subscripts \
     -fsplit-stack \
+    -Wl,--as-needed \
     -I"$HOME/boost/" \
     -I"$LIBRARY_PATH/ac-library/" \
     -I"$LIBRARY_PATH/uni/" \
     "$@" \
     -o "$OUTPUT_PATH"
+
+# -fmodules \
+# -fsearch-include-path \
+# -Wno-misleading-indentation \
+# bits/std.cc bits/std.compat.cc \
+
 # -I"$LIBRARY_PATH/uni/debugger/" \
 # -isystem "$LIBRARY_PATH/benchmark/include/" -L"$LIBRARY_PATH/benchmark/build/src/" -lbenchmark \
 

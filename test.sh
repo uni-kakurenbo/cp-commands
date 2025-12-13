@@ -4,6 +4,8 @@ TEST_PATH=./mock-judges
 COMPILE_ERROR_PATH="$TEST_PATH/.compile-error"
 CASES_PATH="$TEST_PATH/cases"
 CACHE_PATH="$TEST_PATH/.cache"
+PROBLEM_CACHE_PATH="${CACHE_PATH}/problems"
+COMPILER_OUTPUT_CACHE_PATH="${CACHE_PATH}/exe"
 CASES_INFO_PATH="$CASES_PATH/.info"
 EXPANDER_OUTPUT_PATH="$TEST_PATH/expanded"
 COMPILER_OUTPUT_PATH="$TEST_PATH/run"
@@ -170,13 +172,16 @@ fi
 
 cd "$(dirname "${ARGUMENTS[0]}")" || exit 1
 
-TEST_PATH=$(readlink -f "$TEST_PATH")
-COMPILE_ERROR_PATH=$(readlink -f "$COMPILE_ERROR_PATH")
-CASES_PATH=$(readlink -f "$CASES_PATH")
-CASES_INFO_PATH=$(readlink -f "$CASES_INFO_PATH")
-EXPANDER_OUTPUT_PATH=$(readlink -f "$EXPANDER_OUTPUT_PATH")
-COMPILER_OUTPUT_PATH=$(readlink -f "$COMPILER_OUTPUT_PATH")
-RUNNER_OUTPUT_PATH=$(readlink -f "$RUNNER_OUTPUT_PATH")
+TEST_PATH="$(readlink -f "$TEST_PATH")"
+COMPILE_ERROR_PATH="$(readlink -f "$COMPILE_ERROR_PATH")"
+PROBLEM_CACHE_PATH="$(readlink -f "${PROBLEM_CACHE_PATH}")"
+COMPILER_OUTPUT_CACHE_PATH="$(readlink -f "${COMPILER_OUTPUT_CACHE_PATH}")"
+CASES_INFO_PATH="$(readlink -f "${CASES_INFO_PATH}")"
+CASES_PATH="$(readlink -f "$CASES_PATH")"
+CASES_INFO_PATH="$(readlink -f "$CASES_INFO_PATH")"
+EXPANDER_OUTPUT_PATH="$(readlink -f "$EXPANDER_OUTPUT_PATH")"
+COMPILER_OUTPUT_PATH="$(readlink -f "$COMPILER_OUTPUT_PATH")"
+RUNNER_OUTPUT_PATH="$(readlink -f "$RUNNER_OUTPUT_PATH")"
 
 # shellcheck source=/dev/null
 source cp.env
@@ -250,16 +255,27 @@ echo "$(tput setaf 4)INFO: $(tput sgr0)Exepanding: $(tput setaf 5)$(basename "$T
     echo
 }
 
+HASH="$(md5sum "${EXPANDER_OUTPUT_PATH}" | cut -d ' ' -f 1)"
+
 echo "$(tput setaf 4)INFO: $(tput sgr0)Building: $(tput setaf 5)$(basename "$EXPANDER_OUTPUT_PATH")"
-{
-    tput sgr0
+if [[ -f "${COMPILER_OUTPUT_CACHE_PATH}/${HASH}" && "$FORCE" != 'true' ]]; then
+    echo "$(tput setaf 4)INFO: $(tput sgr0)Building: Skipped"
+    cp "${COMPILER_OUTPUT_CACHE_PATH}/${HASH}" "${COMPILER_OUTPUT_PATH}"
+else
+    {
+        tput sgr0
 
-    rm -f "$COMPILER_OUTPUT_PATH"
+        rm -f "$COMPILER_OUTPUT_PATH"
 
-    # shellcheck disable=SC2086
-    time $BUILD_COMMAND "$EXPANDER_OUTPUT_PATH" "$COMPILER_OUTPUT_PATH" $BUILD_OPTIONS 2>"$COMPILE_ERROR_PATH" >/dev/null
-    echo
-} &
+        # shellcheck disable=SC2086
+        time $BUILD_COMMAND "$EXPANDER_OUTPUT_PATH" "$COMPILER_OUTPUT_PATH" $BUILD_OPTIONS 2>"$COMPILE_ERROR_PATH" >/dev/null
+        echo
+
+        cp "${COMPILER_OUTPUT_PATH}" "${COMPILER_OUTPUT_CACHE_PATH}/${HASH}"
+        gzexe "${COMPILER_OUTPUT_CACHE_PATH}/${HASH}"
+        rm "${COMPILER_OUTPUT_CACHE_PATH}/${HASH}~"
+    } &
+fi
 
 if [ $TEST_MODE == 1 ]; then
     cd "$RUNNER_OUTPUT_PATH" || exit 1
@@ -344,11 +360,11 @@ if [ "$PRE_PROBLEM_ID" == "$PROBLEM_ID" ] && [ "$PRE_NUM_OF_CASES" != "" ] && [ 
     NUM_OF_CASES="$PRE_NUM_OF_CASES"
 else
     {
-        CURRENT_CASE_PATH=$(find "$CACHE_PATH" -type d -name "$PROBLEM_ID")
+        CURRENT_CASE_PATH=$(find "$PROBLEM_CACHE_PATH" -type d -name "$PROBLEM_ID")
         if [ "$CURRENT_CASE_PATH" == "" ] || [ "$PRE_NUM_OF_CASES" == "0" ] || [ "$FORCE" == 'true' ]; then
-            mkdir -p "$CACHE_PATH/$PROBLEM_ID"
-            chmod +x "$CACHE_PATH/$PROBLEM_ID"
-            CURRENT_CASE_PATH=$(readlink -e "$CACHE_PATH/$PROBLEM_ID/")
+            mkdir -p "$PROBLEM_CACHE_PATH/$PROBLEM_ID"
+            chmod +x "$PROBLEM_CACHE_PATH/$PROBLEM_ID"
+            CURRENT_CASE_PATH=$(readlink -e "$PROBLEM_CACHE_PATH/$PROBLEM_ID/")
 
             NUM_OF_CASES=$(./ccore.sh sample "$CONTEST_ID" "$PROBLEM_ID" "$CURRENT_CASE_PATH")
 
@@ -405,6 +421,7 @@ function test_sample_case() {
         local started_at ended_at
         started_at=$(date +%s.%N)
         echo "$(tput setaf 109)INFO: $(tput sgr0)Running: $(tput setaf 109)${index} $(tput sgr0)[PID:$BASHPID]"
+        #shellcheck disable=SC2086
         timeout "$TIME_LIMIT_S" $EXECUTE_COMMAND "$COMPILER_OUTPUT_PATH" $EXECUTE_OPTIONS <"$input_file" 1>"$index.res" 2>"$index.log"
         echo "$?" >"$index.status"
         ended_at=$(date +%s.%N)
