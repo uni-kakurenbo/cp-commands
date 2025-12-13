@@ -259,8 +259,11 @@ HASH="$(md5sum "${EXPANDER_OUTPUT_PATH}" | cut -d ' ' -f 1)"
 
 echo "$(tput setaf 4)INFO: $(tput sgr0)Building: $(tput setaf 5)$(basename "$EXPANDER_OUTPUT_PATH")"
 if [[ -f "${COMPILER_OUTPUT_CACHE_PATH}/${HASH}" && "$FORCE" != 'true' ]]; then
-    echo "$(tput setaf 4)INFO: $(tput sgr0)Building: Skipped"
-    cp "${COMPILER_OUTPUT_CACHE_PATH}/${HASH}" "${COMPILER_OUTPUT_PATH}"
+    {
+        echo "$(tput setaf 4)INFO: $(tput sgr0)Building: Skipped"
+        cp "${COMPILER_OUTPUT_CACHE_PATH}/${HASH}" "${COMPILER_OUTPUT_PATH}"
+        gzexe -d "${COMPILER_OUTPUT_PATH}"
+    } &
 else
     {
         tput sgr0
@@ -272,7 +275,7 @@ else
         echo
 
         cp "${COMPILER_OUTPUT_PATH}" "${COMPILER_OUTPUT_CACHE_PATH}/${HASH}"
-        gzexe "${COMPILER_OUTPUT_CACHE_PATH}/${HASH}"
+        gzexe "${COMPILER_OUTPUT_CACHE_PATH}/${HASH}" 2>/dev/null
         rm "${COMPILER_OUTPUT_CACHE_PATH}/${HASH}~"
     } &
 fi
